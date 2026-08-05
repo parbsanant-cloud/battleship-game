@@ -102,7 +102,7 @@ describe('applyShot', () => {
       kind: 'sunk',
       coord: cruiserCells[2],
       shipId: 'cruiser',
-      shipCells: cruiserCells,
+      sunkCells: cruiserCells,
     })
     for (const cell of cruiserCells) {
       expect(final.board.cells[toIndex(cell)]).toBe('sunk')
