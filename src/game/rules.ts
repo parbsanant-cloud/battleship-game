@@ -5,7 +5,7 @@ export type ShotResult =
   | { kind: 'invalid' }
   | { kind: 'miss'; coord: Coord }
   | { kind: 'hit'; coord: Coord; shipId: ShipId }
-  | { kind: 'sunk'; coord: Coord; shipId: ShipId; shipCells: Coord[] }
+  | { kind: 'sunk'; coord: Coord; shipId: ShipId; sunkCells: Coord[] }
 
 export interface ShotOutcome {
   board: Board
@@ -54,7 +54,7 @@ export function applyShot(board: Board, fleet: Ship[], coord: Coord): ShotOutcom
   return {
     board: nextBoard,
     fleet: nextFleet,
-    result: { kind: 'sunk', coord, shipId, shipCells: struck.cells },
+    result: { kind: 'sunk', coord, shipId, sunkCells: struck.cells },
   }
 }
 

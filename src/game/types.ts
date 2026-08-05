@@ -75,6 +75,6 @@ export type Action =
   | { type: 'SET_DIFFICULTY'; difficulty: Difficulty }
   | { type: 'START' }
   | { type: 'PLAYER_FIRE'; coord: Coord }
-  | { type: 'AI_FIRE' }
+  | { type: 'AI_FIRE'; coord: Coord }
   | { type: 'ANIMATION_DONE' }
   | { type: 'NEW_GAME' }
