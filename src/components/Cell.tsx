@@ -1,4 +1,4 @@
-import type { CellState, Coord } from '../game/types.ts'
+import type { Animation, CellState, Coord } from '../game/types.ts'
 
 export type CellPreview = 'valid' | 'invalid' | null
 
@@ -8,6 +8,7 @@ interface CellProps {
   label: string
   preview: CellPreview
   interactive: boolean
+  animating: Animation['kind'] | null
   onSelect: (coord: Coord) => void
   onHover: (coord: Coord | null) => void
 }
@@ -26,11 +27,13 @@ export default function Cell({
   label,
   preview,
   interactive,
+  animating,
   onSelect,
   onHover,
 }: CellProps) {
   const classes = ['cell', `cell--${state}`]
   if (preview) classes.push(`cell--preview-${preview}`)
+  if (animating) classes.push(`cell--anim-${animating}`)
 
   return (
     <button
