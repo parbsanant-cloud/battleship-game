@@ -1,11 +1,18 @@
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import Board from './components/Board.tsx'
+import FleetStatus from './components/FleetStatus.tsx'
+import GameOver from './components/GameOver.tsx'
 import PlacementPanel from './components/PlacementPanel.tsx'
-import { FLEET, inBounds, toIndex } from './game/board.ts'
+import StatusBar from './components/StatusBar.tsx'
+import { CELL_COUNT, FLEET, inBounds, toCoord, toIndex } from './game/board.ts'
 import { canPlace, shipCells } from './game/placement.ts'
 import { createInitialState, gameReducer } from './game/reducer.ts'
 import type { BoardPreview } from './components/Board.tsx'
-import type { Coord } from './game/types.ts'
+import type { CellState, Coord, GameState } from './game/types.ts'
+
+function maskBoard(cells: CellState[]): CellState[] {
+  return cells.map((cell) => (cell === 'ship' ? 'empty' : cell))
+}
 
 function ignoresShortcut(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false
@@ -16,8 +23,10 @@ function ignoresShortcut(target: EventTarget | null): boolean {
 export default function App() {
   const [state, dispatch] = useReducer(gameReducer, 'normal', createInitialState)
   const [hover, setHover] = useState<Coord | null>(null)
+  const stateRef = useRef<GameState>(state)
+  stateRef.current = state
 
-  const { phase, playerBoard, playerFleet, selectedShipId, orientation } = state
+  const { phase, playerBoard, playerFleet, selectedShipId, orientation, animating } = state
   const placing = phase === 'placement'
 
   useEffect(() => {
@@ -49,6 +58,40 @@ export default function App() {
 
   const selectCell = useCallback((origin: Coord) => dispatch({ type: 'PLACE_SHIP', origin }), [])
 
+  useEffect(() => {
+    if (phase !== 'aiTurn' || animating !== null) return
+
+    const currentState = stateRef.current
+    const candidates = Array.from({ length: CELL_COUNT }, (_, index) => index).filter(
+      (index) =>
+        !currentState.ai.fired.has(index) &&
+        !['hit', 'miss', 'sunk'].includes(currentState.playerBoard.cells[index]),
+    )
+    if (candidates.length === 0) return
+
+    const index = candidates[Math.floor(Math.random() * candidates.length)]
+    const timer = window.setTimeout(() => {
+      dispatch({ type: 'AI_FIRE', coord: toCoord(index) })
+    }, 700)
+    return () => window.clearTimeout(timer)
+  }, [phase, animating])
+
+  useEffect(() => {
+    if (animating === null) return
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const timer = window.setTimeout(
+      () => dispatch({ type: 'ANIMATION_DONE' }),
+      reducedMotion ? 0 : 450,
+    )
+    return () => window.clearTimeout(timer)
+  }, [animating])
+
+  const animatedPlayerBoard =
+    animating !== null && (phase === 'aiTurn' || state.winner === 'ai')
+  const animatedEnemyBoard =
+    animating !== null && (phase === 'playerTurn' || state.winner === 'player')
+
   return (
     <div className="app">
       <header className="app__header">
@@ -56,20 +99,20 @@ export default function App() {
         <p className="app__tagline">Position your fleet, then take on the AI.</p>
       </header>
 
-      <main className="layout">
-        <section className="layout__board">
-          <h2 className="board__title">Your waters</h2>
-          <Board
-            cells={playerBoard.cells}
-            label="Your waters"
-            interactive={placing}
-            preview={preview}
-            onSelectCell={selectCell}
-            onHoverCell={setHover}
-          />
-        </section>
+      {placing ? (
+        <main className="layout">
+          <section className="layout__board">
+            <h2 className="board__title">Your waters</h2>
+            <Board
+              cells={playerBoard.cells}
+              label="Your waters"
+              interactive={placing}
+              preview={preview}
+              onSelectCell={selectCell}
+              onHoverCell={setHover}
+            />
+          </section>
 
-        {placing ? (
           <PlacementPanel
             fleet={playerFleet}
             selectedShipId={selectedShipId}
@@ -83,22 +126,51 @@ export default function App() {
             onStart={() => dispatch({ type: 'START' })}
             onDifficultyChange={(difficulty) => dispatch({ type: 'SET_DIFFICULTY', difficulty })}
           />
-        ) : (
-          <aside className="panel">
-            <h2 className="panel__heading">Fleet deployed</h2>
-            <p className="panel__note">
-              Your ships are in position. The battle screen arrives in the next step.
-            </p>
-            <button
-              type="button"
-              className="button button--primary"
-              onClick={() => dispatch({ type: 'NEW_GAME' })}
-            >
-              Back to placement
-            </button>
-          </aside>
-        )}
-      </main>
+        </main>
+      ) : (
+        <main className="battle-screen">
+          <StatusBar phase={phase} message={state.message} winner={state.winner} />
+          <div className="battle-screen__boards">
+            <section className="battle-screen__board">
+              <h2 className="board__title">Your fleet</h2>
+              <Board
+                cells={playerBoard.cells}
+                label="Your fleet"
+                interactive={false}
+                preview={null}
+                animatingIndex={animatedPlayerBoard ? animating?.index : null}
+                animatingKind={animatedPlayerBoard ? animating?.kind : null}
+                onSelectCell={() => {}}
+                onHoverCell={() => {}}
+              />
+            </section>
+            <section className="battle-screen__board">
+              <h2 className="board__title">Enemy waters</h2>
+              <Board
+                cells={maskBoard(state.aiBoard.cells)}
+                label="Enemy waters"
+                interactive={phase === 'playerTurn' && animating === null}
+                preview={null}
+                animatingIndex={animatedEnemyBoard ? animating?.index : null}
+                animatingKind={animatedEnemyBoard ? animating?.kind : null}
+                onSelectCell={(coord) => dispatch({ type: 'PLAYER_FIRE', coord })}
+                onHoverCell={() => {}}
+              />
+            </section>
+          </div>
+          <div className="battle-screen__fleets">
+            <FleetStatus title="Your fleet status" ships={state.playerFleet} reveal />
+            <FleetStatus title="Enemy fleet status" ships={state.aiFleet} reveal={false} />
+          </div>
+          {phase === 'gameOver' && state.winner !== null && (
+            <GameOver
+              winner={state.winner}
+              stats={state.stats}
+              onPlayAgain={() => dispatch({ type: 'NEW_GAME' })}
+            />
+          )}
+        </main>
+      )}
     </div>
   )
 }

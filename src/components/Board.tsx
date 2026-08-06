@@ -1,7 +1,7 @@
 import { Fragment } from 'react'
 import { BOARD_SIZE, toCoord } from '../game/board.ts'
 import Cell from './Cell.tsx'
-import type { CellState, Coord } from '../game/types.ts'
+import type { Animation, CellState, Coord } from '../game/types.ts'
 
 const COLUMN_LABELS = Array.from({ length: BOARD_SIZE }, (_, i) => String.fromCharCode(65 + i))
 const ROW_LABELS = Array.from({ length: BOARD_SIZE }, (_, i) => String(i + 1))
@@ -22,6 +22,8 @@ interface BoardProps {
   preview: BoardPreview | null
   onSelectCell: (coord: Coord) => void
   onHoverCell: (coord: Coord | null) => void
+  animatingIndex?: number | null
+  animatingKind?: Animation['kind'] | null
 }
 
 export default function Board({
@@ -31,6 +33,8 @@ export default function Board({
   preview,
   onSelectCell,
   onHoverCell,
+  animatingIndex = null,
+  animatingKind = null,
 }: BoardProps) {
   return (
     <div className="board" role="group" aria-label={label}>
@@ -61,6 +65,7 @@ export default function Board({
               label={coordLabel(coord)}
               preview={previewKind}
               interactive={interactive}
+              animating={animatingIndex === index ? animatingKind : null}
               onSelect={onSelectCell}
               onHover={onHoverCell}
             />
