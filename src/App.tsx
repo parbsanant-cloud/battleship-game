@@ -4,7 +4,8 @@ import FleetStatus from './components/FleetStatus.tsx'
 import GameOver from './components/GameOver.tsx'
 import PlacementPanel from './components/PlacementPanel.tsx'
 import StatusBar from './components/StatusBar.tsx'
-import { CELL_COUNT, FLEET, inBounds, toCoord, toIndex } from './game/board.ts'
+import { FLEET, inBounds, toIndex } from './game/board.ts'
+import { chooseAIShot } from './game/ai.ts'
 import { canPlace, shipCells } from './game/placement.ts'
 import { createInitialState, gameReducer } from './game/reducer.ts'
 import type { BoardPreview } from './components/Board.tsx'
@@ -62,16 +63,9 @@ export default function App() {
     if (phase !== 'aiTurn' || animating !== null) return
 
     const currentState = stateRef.current
-    const candidates = Array.from({ length: CELL_COUNT }, (_, index) => index).filter(
-      (index) =>
-        !currentState.ai.fired.has(index) &&
-        !['hit', 'miss', 'sunk'].includes(currentState.playerBoard.cells[index]),
-    )
-    if (candidates.length === 0) return
-
-    const index = candidates[Math.floor(Math.random() * candidates.length)]
+    const coord = chooseAIShot(currentState.ai, currentState.difficulty)
     const timer = window.setTimeout(() => {
-      dispatch({ type: 'AI_FIRE', coord: toCoord(index) })
+      dispatch({ type: 'AI_FIRE', coord })
     }, 700)
     return () => window.clearTimeout(timer)
   }, [phase, animating])
