@@ -4,10 +4,9 @@ import type { Ship } from '../game/types.ts'
 interface FleetStatusProps {
   title: string
   ships: Ship[]
-  reveal: boolean
 }
 
-export default function FleetStatus({ title, ships, reveal }: FleetStatusProps) {
+export default function FleetStatus({ title, ships }: FleetStatusProps) {
   return (
     <section className="fleet-status" aria-label={title}>
       <h2 className="fleet-status__title">{title}</h2>
@@ -24,17 +23,15 @@ export default function FleetStatus({ title, ships, reveal }: FleetStatusProps) 
             >
               <span className="fleet-status__name">{spec.name}</span>
               <span className="fleet-status__badge">{status}</span>
-              {reveal && (
-                <span
-                  className="fleet-status__pips"
-                  role="img"
-                  aria-label={`${ship?.hits ?? 0} of ${spec.length} cells hit`}
-                >
-                  {Array.from({ length: spec.length }, (_, index) => (
-                    <span key={index} className={index < (ship?.hits ?? 0) ? 'pip pip--filled' : 'pip'} />
-                  ))}
-                </span>
-              )}
+              <span
+                className="fleet-status__pips"
+                role="img"
+                aria-label={`${ship?.hits ?? 0} of ${spec.length} cells hit`}
+              >
+                {Array.from({ length: spec.length }, (_, index) => (
+                  <span key={index} className={index < (ship?.hits ?? 0) ? 'pip pip--filled' : 'pip'} />
+                ))}
+              </span>
             </li>
           )
         })}
