@@ -1,7 +1,7 @@
 import type { Animation, Coord } from '../game/types.ts'
 import type { DisplayCellState } from './Board.tsx'
 
-export type CellPreview = 'valid' | 'invalid' | null
+type CellPreview = 'valid' | 'invalid' | null
 
 interface CellProps {
   coord: Coord
@@ -23,6 +23,8 @@ const STATE_DESCRIPTION: Record<DisplayCellState, string> = {
   revealed: 'enemy ship revealed after defeat',
 }
 
+const RESOLVED_STATES = new Set<DisplayCellState>(['hit', 'miss', 'sunk', 'revealed'])
+
 export default function Cell({
   coord,
   state,
@@ -41,7 +43,7 @@ export default function Cell({
     <button
       type="button"
       className={classes.join(' ')}
-      disabled={!interactive || state === 'revealed'}
+      disabled={!interactive || RESOLVED_STATES.has(state)}
       aria-label={`${label}, ${STATE_DESCRIPTION[state]}`}
       onClick={() => onSelect(coord)}
       onMouseEnter={() => onHover(coord)}

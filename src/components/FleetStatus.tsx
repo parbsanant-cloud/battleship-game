@@ -21,12 +21,15 @@ export default function FleetStatus({ title, ships, reveal }: FleetStatusProps) 
             <li
               key={spec.id}
               className={`fleet-status__row fleet-status__row--${status}`}
-              aria-label={`${spec.name}, ${status}`}
             >
               <span className="fleet-status__name">{spec.name}</span>
               <span className="fleet-status__badge">{status}</span>
               {reveal && (
-                <span className="fleet-status__pips" aria-label={`${ship?.hits ?? 0} hits`}>
+                <span
+                  className="fleet-status__pips"
+                  role="img"
+                  aria-label={`${ship?.hits ?? 0} of ${spec.length} cells hit`}
+                >
                   {Array.from({ length: spec.length }, (_, index) => (
                     <span key={index} className={index < (ship?.hits ?? 0) ? 'pip pip--filled' : 'pip'} />
                   ))}
