@@ -3,6 +3,8 @@ import { BOARD_SIZE, toCoord } from '../game/board.ts'
 import Cell from './Cell.tsx'
 import type { Animation, CellState, Coord } from '../game/types.ts'
 
+export type DisplayCellState = CellState | 'revealed'
+
 const COLUMN_LABELS = Array.from({ length: BOARD_SIZE }, (_, i) => String.fromCharCode(65 + i))
 const ROW_LABELS = Array.from({ length: BOARD_SIZE }, (_, i) => String(i + 1))
 
@@ -16,7 +18,7 @@ export interface BoardPreview {
 }
 
 interface BoardProps {
-  cells: CellState[]
+  cells: DisplayCellState[]
   label: string
   interactive: boolean
   preview: BoardPreview | null
