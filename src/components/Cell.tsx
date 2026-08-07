@@ -1,10 +1,11 @@
-import type { Animation, CellState, Coord } from '../game/types.ts'
+import type { Animation, Coord } from '../game/types.ts'
+import type { DisplayCellState } from './Board.tsx'
 
 export type CellPreview = 'valid' | 'invalid' | null
 
 interface CellProps {
   coord: Coord
-  state: CellState
+  state: DisplayCellState
   label: string
   preview: CellPreview
   interactive: boolean
@@ -13,12 +14,13 @@ interface CellProps {
   onHover: (coord: Coord | null) => void
 }
 
-const STATE_DESCRIPTION: Record<CellState, string> = {
+const STATE_DESCRIPTION: Record<DisplayCellState, string> = {
   empty: 'water',
   ship: 'your ship',
   hit: 'hit',
   miss: 'miss',
   sunk: 'sunk',
+  revealed: 'enemy ship revealed after defeat',
 }
 
 export default function Cell({
@@ -39,7 +41,7 @@ export default function Cell({
     <button
       type="button"
       className={classes.join(' ')}
-      disabled={!interactive}
+      disabled={!interactive || state === 'revealed'}
       aria-label={`${label}, ${STATE_DESCRIPTION[state]}`}
       onClick={() => onSelect(coord)}
       onMouseEnter={() => onHover(coord)}

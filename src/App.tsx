@@ -8,11 +8,11 @@ import { FLEET, inBounds, toIndex } from './game/board.ts'
 import { chooseAIShot } from './game/ai.ts'
 import { canPlace, shipCells } from './game/placement.ts'
 import { createInitialState, gameReducer } from './game/reducer.ts'
-import type { BoardPreview } from './components/Board.tsx'
+import type { BoardPreview, DisplayCellState } from './components/Board.tsx'
 import type { CellState, Coord, GameState } from './game/types.ts'
 
-function maskBoard(cells: CellState[]): CellState[] {
-  return cells.map((cell) => (cell === 'ship' ? 'empty' : cell))
+function maskBoard(cells: CellState[], revealShips: boolean): DisplayCellState[] {
+  return cells.map((cell) => (cell === 'ship' ? (revealShips ? 'revealed' : 'empty') : cell))
 }
 
 function ignoresShortcut(target: EventTarget | null): boolean {
@@ -141,7 +141,7 @@ export default function App() {
             <section className="battle-screen__board">
               <h2 className="board__title">Enemy waters</h2>
               <Board
-                cells={maskBoard(state.aiBoard.cells)}
+                cells={maskBoard(state.aiBoard.cells, phase === 'gameOver' && state.winner === 'ai')}
                 label="Enemy waters"
                 interactive={phase === 'playerTurn' && animating === null}
                 preview={null}
