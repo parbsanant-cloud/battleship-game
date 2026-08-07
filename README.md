@@ -89,6 +89,13 @@ The development server runs at `http://localhost:5173`.
 | `npm test` | Run the Vitest suite once |
 | `npm run test:watch` | Vitest in watch mode |
 
+## Deployment
+
+The app is a static Vercel site using the Vite preset: `npm run build` emits to
+`dist/`, and Vercel reads the Node version from `engines.node`. Pushes to `main`
+deploy to production, pull requests get preview URLs, and no environment
+variables are required.
+
 ## AI Difficulty
 
 Easy mode fires uniformly at random among cells it has not fired at yet.
