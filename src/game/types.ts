@@ -32,7 +32,6 @@ export type Difficulty = 'easy' | 'normal'
 /** What the AI knows: only where it has fired and what it was told in return. */
 export interface AIMemory {
   fired: Set<number>
-  queue: Coord[]
   hits: Coord[]
 }
 

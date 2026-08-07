@@ -1,3 +1,4 @@
+import { updateAIMemory } from './ai.ts'
 import { FLEET, createBoard, toIndex, type ShipSpec } from './board.ts'
 import { canPlace, placeShip, randomFleet } from './placement.ts'
 import { applyShot, isFleetDestroyed, type ShotResult } from './rules.ts'
@@ -23,7 +24,7 @@ export function createInitialState(difficulty: GameState['difficulty'] = 'normal
     aiBoard: ai.board,
     playerFleet: [],
     aiFleet: ai.fleet,
-    ai: { fired: new Set(), queue: [], hits: [] },
+    ai: { fired: new Set(), hits: [] },
     selectedShipId: FLEET[0].id,
     orientation: 'H',
     message: PLACEMENT_MESSAGE,
@@ -101,7 +102,7 @@ function fireAIShot(state: GameState, coord: Coord): GameState {
     winner: lost ? 'ai' : state.winner,
     playerBoard: board,
     playerFleet: fleet,
-    ai: { ...state.ai, fired: new Set(state.ai.fired).add(toIndex(coord)) },
+    ai: updateAIMemory(state.ai, coord, result),
     stats: {
       ...state.stats,
       aiShots: state.stats.aiShots + 1,
