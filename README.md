@@ -1,94 +1,55 @@
-# Battleship
+# Battleship AI (Cognition Take-Home Project)
 
-## Project overview
+## Project Overview
 
-Battleship is a browser-based, single-player Battleship game. A human places a
-fleet and plays against an AI opponent. The application is client-side only:
-there is no backend, account system, database, or network dependency during
-play.
+Battleship is a browser-based, single-player Battleship game against an AI
+opponent. It is client-side only: there is no backend, account system, or
+network dependency during play.
 
-## Links
+I built this project as part of the Cognition interview process with the goal
+of demonstrating thoughtful collaboration with Devin, iterative engineering,
+and disciplined software development rather than simply generating code.
 
-- **Live demo:** https://battleship-game-sage.vercel.app/
-- **GitHub repository:** https://github.com/parbsanant-cloud/battleship-game
+## Live Demo
+
+- **Play the game:** <https://battleship-game-sage.vercel.app/>
+- **GitHub repository:** <https://github.com/parbsanant-cloud/battleship-game>
 
 ## Features
 
 - Manual fleet placement with hover validation preview
-- Ship rotation, including the `R` keyboard shortcut
 - Randomize and clear placement controls
-- Turn-based firing with hit, miss, and sunk feedback
-- Player and enemy fleet-status panels
+- Ship rotation, including the `R` keyboard shortcut
+- Easy AI
+- Normal hunt/target AI
+- Hit, miss, and sunk feedback with fleet-status panels
 - Win and lose detection
 - Enemy fleet reveal after defeat
-- Play Again, preserving the selected difficulty
+- Play Again while preserving the selected difficulty
 - Responsive layout down to 375px
-- Reduced-motion support for board animations
+- Accessibility support: `aria-label`s on cells and boards, `aria-live`
+  announcements, disabled spent cells, and visible focus styles
+- Reduced-motion support
+- Automated Vitest suite
 
-## Easy vs Normal AI
+The project intentionally prioritizes correctness, accessibility, and
+maintainability over adding extra gameplay features outside the assignment
+scope.
 
-Easy mode fires uniformly at random among cells it has not fired at yet.
-
-Normal mode uses hunt/target behavior. It hunts randomly until it gets a hit,
-then chooses unfired orthogonal neighbours. Once two unresolved hits are
-aligned, it extends along that axis, including filling an unfired interior gap.
-It also tracks which ships it has sunk from its own shot results and skips hunt
-cells too cramped to hold the smallest ship still afloat. When a ship sinks,
-only that ship's cells are removed from unresolved-hit memory. Hits belonging
-to an adjacent ship that is still afloat remain, so the AI stays in target mode.
-
-The shot-selection function is deliberately fair: `chooseAIShot` receives only
-`AIMemory` (fired indices, unresolved hit coordinates, and the ships its own
-shots have sunk) and the difficulty.
-It never receives the player's board or fleet, so it cannot see hidden ships.
-
-## Tech stack
+## Tech Stack
 
 - React 19
 - TypeScript
 - Vite
 - Vitest
+- Vercel
 - oxlint
 - Plain CSS
 - Node.js >= 22.12
 
-There is no backend and no dependency beyond React and the React DOM runtime.
+There are no runtime dependencies beyond React and React DOM.
 
-## Local setup
-
-Use Node 22.12.0, matching `.nvmrc` and the package engine requirement:
-
-```bash
-source ~/.nvm/nvm.sh
-nvm use 22.12.0
-npm install
-npm run dev
-```
-
-The development server runs at `http://localhost:5173`.
-
-## Test and development commands
-
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Dev server with hot reload |
-| `npm run build` | Typecheck + production build to `dist/` |
-| `npm run preview` | Serve the production build locally |
-| `npm run typecheck` | `tsc -b --noEmit` |
-| `npm run lint` | oxlint |
-| `npm test` | Run the Vitest suite once |
-| `npm run test:watch` | Vitest in watch mode |
-
-## Deployment
-
-The app is deployed as a static Vercel site using the Vite preset. The
-production build is created with `npm run build` and emitted to `dist/`.
-Vercel reads the Node version from `engines.node` in `package.json`.
-
-Pushes to `main` deploy to production, and pull requests receive preview URLs.
-No environment variables are required.
-
-## Project structure
+## Project Structure
 
 ```text
 src/
@@ -110,15 +71,90 @@ src/
 └── styles.css              # Naval theme and responsive layout
 ```
 
-`App.tsx` owns the single `useReducer`; there is no Context layer. Components
-receive state and callbacks through props and dispatch actions through App.
+## Local Development
+
+Use Node 22.12.0, matching `.nvmrc` and the package engine requirement:
+
+```bash
+source ~/.nvm/nvm.sh
+nvm use 22.12.0
+npm install
+npm run dev
+```
+
+The development server runs at `http://localhost:5173`.
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Dev server with hot reload |
+| `npm run build` | Typecheck + production build to `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm run typecheck` | `tsc -b --noEmit` |
+| `npm run lint` | oxlint |
+| `npm test` | Run the Vitest suite once |
+| `npm run test:watch` | Vitest in watch mode |
+
+## Deployment
+
+The app is a static Vercel site using the Vite preset: `npm run build` emits to
+`dist/`, and Vercel reads the Node version from `engines.node`. Pushes to `main`
+deploy to production, pull requests get preview URLs, and no environment
+variables are required.
+
+## AI Difficulty
+
+Easy mode fires uniformly at random among cells it has not fired at yet.
+
+Normal mode uses hunt/target behavior. It hunts randomly until it gets a hit,
+then chooses unfired orthogonal neighbours. Once two unresolved hits are
+aligned, it extends along that axis, including filling an unfired interior gap.
+It tracks which ships its own shots have sunk and skips hunt cells too cramped
+to hold the smallest ship still afloat. When a ship sinks, only that ship's
+cells are removed from unresolved-hit memory. Hits belonging to an adjacent
+ship that is still afloat remain, so the AI stays in target mode.
+
+The shot-selection function is deliberately fair:
+`chooseAIShot` receives only `AIMemory` — fired indices, unresolved hits, and
+the ships its own shots have sunk — plus the difficulty. It never receives the
+player board or fleet, so it cannot see hidden ships.
+
+## Architecture
+
+Game logic lives in `src/game/` as pure TypeScript with zero React imports.
+`App.tsx` owns the single `useReducer`; there is no Context layer. State and
+callbacks flow down through props, and components dispatch actions back up
+through callbacks. Presentational components live in `src/components/`.
 Boards use flat 10×10 arrays indexed by `r * 10 + c`.
 
-## How I used Devin
+Separating rules and AI from rendering makes the rules unit-testable without a
+DOM or renderer. It also keeps the AI's information boundary enforceable:
+components cannot physically leak hidden ship positions because the enemy
+board is masked in one place in `App.tsx` before it is rendered. Rendering is
+then a pure function of state.
 
-I wrote an implementation plan and had it reviewed before writing code. The
-plan was deliberately cut down from the first draft to a scope deliverable in
-a few hours. I implemented the project in nine reviewed stages:
+## Testing
+
+There are three verification layers:
+
+1. **Automated:** 69 Vitest tests cover board, placement, rules, reducer, and
+   AI behavior. The project also runs `npm run typecheck`, `npm run lint`, and
+   `npm run build`.
+2. **Manual QA:** Every UI stage was browser-verified, including complete games
+   to both a player win and an AI win, keyboard-only placement and firing,
+   reduced-motion behavior, the 375px layout with no horizontal scroll, and an
+   empty console.
+3. **Production verification:** After merge, the deployed Vercel bundle was
+   confirmed byte-identical to a fresh local build of `main`. Instrumented
+   Normal games on the live site recorded 179 hunt shots with zero
+   infeasible-cell violations and zero repeated or out-of-bounds AI shots.
+
+## How I Used Devin
+
+I asked Devin to plan before writing any code, and I reviewed the proposed
+architecture. I intentionally cut scope to reduce unnecessary complexity; the
+first plan draft was deliberately reduced.
+
+Implementation proceeded as staged pull requests:
 
 1. scaffold
 2. types and board
@@ -129,32 +165,35 @@ a few hours. I implemented the project in nine reviewed stages:
 7. battle screen
 8. hunt/target AI
 9. reveal-on-defeat
+10. release-candidate review
 
-This release-candidate review follows those stages. I used one pull request
-per stage, and a human reviewed and explicitly approved each stage before the
-next began. I added unit tests for game logic and browser-verified every UI
-stage. Before coding each stage, I asked and resolved design questions such as
-function signatures, state shape, and implementation tradeoffs.
+Each stage required tests before I approved it, and I reviewed every stage
+manually before the next began. I applied my own judgment rather than
+accepting every recommendation: I approved some proposals and rejected or
+changed others. I also found the late-game AI bug myself by playing the game.
 
-## Engineering tradeoffs
+During development, I also discovered additional improvements through manual
+playtesting and had Devin implement targeted fixes after validating the issues
+myself.
 
-- **Backend:** There is nothing to persist or coordinate in a local
-  single-player match, so static hosting keeps deployment trivial.
-- **Multiplayer:** Multiplayer would require a server, authentication,
-  matchmaking, and realtime transport. That is a different project.
-- **Persistence/localStorage:** A match is intended to be one sitting.
-  Resumable state would add migration and invalidation concerns without user
-  gain for this scope.
-- **Probability-density AI:** Hunt/target already plays convincingly.
-  Density scoring is substantially harder to test and keep provably fair, and
-  could produce an opponent that is less fun to play.
-- **Sound:** Sound conveys no gameplay information here and would require
-  autoplay handling plus a mute control.
-- **Further polish:** A keyboard-navigable board grid with roving tabindex,
-  animations beyond hit/miss/sunk, and theming were deliberately traded for
-  reliability and test coverage in the available time.
+## Engineering Tradeoffs
 
-## Known limitations
+- **Multiplayer:** It needs a server, authentication, matchmaking, and
+  realtime transport, so it is outside this assignment.
+- **Backend:** A local single-player match has nothing to persist or
+  coordinate, so static hosting keeps deployment simple.
+- **Persistence:** A match is a single sitting; resumable state would add
+  migration and invalidation concerns without enough user benefit here.
+- **Probability-density AI:** Hunt/target is sufficient for this assignment;
+  density scoring adds complexity and makes fairness and testing harder.
+- **Sound:** It conveys no gameplay information here and would require
+  autoplay handling and a mute control.
+- **Hard difficulty:** A third tuning profile would add balancing and testing
+  work without demonstrating a different architectural capability.
+- **Additional game modes:** They would expand rules, UI, and test scope beyond
+  the human-versus-AI match required for this assignment.
+
+## Known Limitations
 
 1. Board cells are individually tabbable rather than an arrow-key grid, so
    traversing a board by keyboard takes many tab presses. Spent cells are now
