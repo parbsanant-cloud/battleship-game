@@ -1,4 +1,4 @@
-# Battleship
+# Battleship AI (Cognition Take-Home Project)
 
 ## Project Overview
 
@@ -6,13 +6,14 @@ Battleship is a browser-based, single-player Battleship game against an AI
 opponent. It is client-side only: there is no backend, account system, or
 network dependency during play.
 
-I built it as part of the Cognition interview process, with the emphasis on
-demonstrating collaboration with Devin rather than raw code generation.
+I built this project as part of the Cognition interview process with the goal
+of demonstrating thoughtful collaboration with Devin, iterative engineering,
+and disciplined software development rather than simply generating code.
 
 ## Live Demo
 
-- https://battleship-game-sage.vercel.app/
-- https://github.com/parbsanant-cloud/battleship-game
+- **Play the game:** <https://battleship-game-sage.vercel.app/>
+- **GitHub repository:** <https://github.com/parbsanant-cloud/battleship-game>
 
 ## Features
 
@@ -30,6 +31,10 @@ demonstrating collaboration with Devin rather than raw code generation.
   announcements, disabled spent cells, and visible focus styles
 - Reduced-motion support
 - Automated Vitest suite
+
+The project intentionally prioritizes correctness, accessibility, and
+maintainability over adding extra gameplay features outside the assignment
+scope.
 
 ## Tech Stack
 
@@ -166,6 +171,10 @@ Each stage required tests before I approved it, and I reviewed every stage
 manually before the next began. I applied my own judgment rather than
 accepting every recommendation: I approved some proposals and rejected or
 changed others. I also found the late-game AI bug myself by playing the game.
+
+During development, I also discovered additional improvements through manual
+playtesting and had Devin implement targeted fixes after validating the issues
+myself.
 
 ## Engineering Tradeoffs
 

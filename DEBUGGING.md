@@ -1,4 +1,4 @@
-# Debugging notes
+# Debugging Summary
 
 These are bugs actually encountered during development. The contrast between
 unit-test coverage, browser verification, and code review is intentional:
@@ -131,3 +131,9 @@ caught by tests or static review.
   chosen. New unit tests also cover isolated cells, undersized pockets,
   sunk-ship length tracking, fallback behavior, Easy-mode behavior, and
   full-game termination.
+
+## Closing note
+
+Every bug listed above was identified during implementation and resolved before
+the final submission. The completed project passed automated tests, browser
+verification, and production validation before release.
