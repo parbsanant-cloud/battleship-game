@@ -439,10 +439,8 @@ body {
 .battle-log__list {
   display: grid;
   gap: 0.25rem;
-  max-height: 10rem;
   margin: 0;
   padding: 0;
-  overflow: hidden;
   list-style: none;
 }
 
