@@ -5,6 +5,7 @@ import { applyShot, isFleetDestroyed, type ShotResult } from './rules.ts'
 import type { Action, Coord, GameState, Ship, ShipId } from './types.ts'
 
 const PLACEMENT_MESSAGE = 'Place your fleet, then start the game.'
+const MAX_LOG_ENTRIES = 8
 
 function specFor(id: ShipId): ShipSpec | undefined {
   return FLEET.find((spec) => spec.id === id)
@@ -29,8 +30,20 @@ export function createInitialState(difficulty: GameState['difficulty'] = 'normal
     orientation: 'H',
     message: PLACEMENT_MESSAGE,
     stats: { playerShots: 0, playerHits: 0, aiShots: 0, aiHits: 0 },
+    battleLog: [],
+    nextLogId: 0,
+    toast: null,
     animating: null,
     winner: null,
+  }
+}
+
+function addLogEntry(state: GameState, message: string): GameState {
+  const entry = { id: state.nextLogId, message }
+  return {
+    ...state,
+    battleLog: [entry, ...state.battleLog].slice(0, MAX_LOG_ENTRIES),
+    nextLogId: state.nextLogId + 1,
   }
 }
 
@@ -65,6 +78,14 @@ function aiMessage(result: ShotResult, fleet: Ship[]): string {
   }
 }
 
+function playerToast(result: ShotResult, fleet: Ship[]): string | null {
+  return result.kind === 'sunk' ? `You sunk the ${shipName(fleet, result.shipId)}!` : null
+}
+
+function aiToast(result: ShotResult, fleet: Ship[]): string | null {
+  return result.kind === 'sunk' ? `Enemy sunk your ${shipName(fleet, result.shipId)}!` : null
+}
+
 function animationFor(result: ShotResult): GameState['animating'] {
   if (result.kind === 'invalid') return null
   return { index: toIndex(result.coord), kind: result.kind }
@@ -75,7 +96,10 @@ function firePlayerShot(state: GameState, coord: Coord): GameState {
   if (result.kind === 'invalid') return state
 
   const won = isFleetDestroyed(fleet)
-  return {
+  const shotMessage = playerMessage(result, fleet)
+  const toastMessage = playerToast(result, fleet)
+  const gameMessage = 'You win! The enemy fleet is destroyed.'
+  const next = {
     ...state,
     phase: won ? 'gameOver' : state.phase,
     winner: won ? 'player' : state.winner,
@@ -86,9 +110,12 @@ function firePlayerShot(state: GameState, coord: Coord): GameState {
       playerShots: state.stats.playerShots + 1,
       playerHits: state.stats.playerHits + (result.kind === 'miss' ? 0 : 1),
     },
-    message: won ? 'You win! The enemy fleet is destroyed.' : playerMessage(result, fleet),
+    message: won ? gameMessage : shotMessage,
+    toast: toastMessage ? { id: state.nextLogId, message: toastMessage } : state.toast,
     animating: animationFor(result),
   }
+  const withShot = addLogEntry(next, shotMessage)
+  return won ? addLogEntry({ ...withShot, message: gameMessage }, gameMessage) : withShot
 }
 
 function fireAIShot(state: GameState, coord: Coord): GameState {
@@ -96,7 +123,10 @@ function fireAIShot(state: GameState, coord: Coord): GameState {
   if (result.kind === 'invalid') return state
 
   const lost = isFleetDestroyed(fleet)
-  return {
+  const shotMessage = aiMessage(result, fleet)
+  const toastMessage = aiToast(result, fleet)
+  const gameMessage = 'The enemy sank your fleet. You lose.'
+  const next = {
     ...state,
     phase: lost ? 'gameOver' : state.phase,
     winner: lost ? 'ai' : state.winner,
@@ -108,9 +138,12 @@ function fireAIShot(state: GameState, coord: Coord): GameState {
       aiShots: state.stats.aiShots + 1,
       aiHits: state.stats.aiHits + (result.kind === 'miss' ? 0 : 1),
     },
-    message: lost ? 'The enemy sank your fleet. You lose.' : aiMessage(result, fleet),
+    message: lost ? gameMessage : shotMessage,
+    toast: toastMessage ? { id: state.nextLogId, message: toastMessage } : state.toast,
     animating: animationFor(result),
   }
+  const withShot = addLogEntry(next, shotMessage)
+  return lost ? addLogEntry({ ...withShot, message: gameMessage }, gameMessage) : withShot
 }
 
 export function gameReducer(state: GameState, action: Action): GameState {
@@ -194,6 +227,9 @@ export function gameReducer(state: GameState, action: Action): GameState {
         phase: state.phase === 'playerTurn' ? 'aiTurn' : 'playerTurn',
       }
     }
+
+    case 'DISMISS_TOAST':
+      return state.toast === null ? state : { ...state, toast: null }
 
     case 'NEW_GAME':
       return createInitialState(state.difficulty)

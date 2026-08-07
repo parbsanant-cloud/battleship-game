@@ -236,6 +236,84 @@ describe('game over', () => {
   })
 })
 
+describe('battle log', () => {
+  it('orders newest events first and caps the list at eight entries', () => {
+    let state = duelState()
+    const coords = [
+      { r: 2, c: 0 },
+      { r: 2, c: 1 },
+      { r: 2, c: 2 },
+      { r: 2, c: 3 },
+      { r: 2, c: 4 },
+      { r: 2, c: 5 },
+      { r: 2, c: 6 },
+      { r: 2, c: 7 },
+      { r: 2, c: 8 },
+    ]
+
+    for (const coord of coords) {
+      state = { ...playerFires(state, coord), phase: 'playerTurn' }
+    }
+
+    expect(state.battleLog).toHaveLength(8)
+    expect(state.battleLog[0].message).toBe('You missed.')
+    expect(state.battleLog.map((entry) => entry.id)).toEqual(
+      [...state.battleLog].sort((a, b) => b.id - a.id).map((entry) => entry.id),
+    )
+    expect(new Set(state.battleLog.map((entry) => entry.id)).size).toBe(8)
+  })
+
+  it('records both the sinking shot and the winning event', () => {
+    const afterFirst = playerFires(duelState(), { r: 0, c: 0 })
+    const won = gameReducer(
+      { ...afterFirst, phase: 'playerTurn' },
+      { type: 'PLAYER_FIRE', coord: { r: 0, c: 1 } },
+    )
+
+    expect(won.battleLog.slice(0, 2).map((entry) => entry.message)).toEqual([
+      'You win! The enemy fleet is destroyed.',
+      'You sank the enemy Destroyer!',
+    ])
+  })
+})
+
+describe('toast', () => {
+  it('keeps a sink toast through a following non-sinking shot', () => {
+    const afterFirst = playerFires(duelState(), { r: 0, c: 0 })
+    const sunk = gameReducer(
+      { ...afterFirst, phase: 'playerTurn' },
+      { type: 'PLAYER_FIRE', coord: { r: 0, c: 1 } },
+    )
+    const afterMiss = gameReducer(
+      { ...sunk, phase: 'aiTurn', winner: null, animating: null },
+      { type: 'AI_FIRE', coord: { r: 5, c: 5 } },
+    )
+
+    expect(sunk.toast?.message).toBe('You sunk the Destroyer!')
+    expect(afterMiss.toast).toEqual(sunk.toast)
+  })
+
+  it('replaces an existing toast when a new ship sinks', () => {
+    const afterFirst = playerFires(duelState(), { r: 0, c: 0 })
+    const playerWon = gameReducer(
+      { ...afterFirst, phase: 'playerTurn' },
+      { type: 'PLAYER_FIRE', coord: { r: 0, c: 1 } },
+    )
+    const afterAiFirst = gameReducer(
+      { ...playerWon, phase: 'aiTurn', winner: null, animating: null },
+      { type: 'AI_FIRE', coord: { r: 9, c: 8 } },
+    )
+    const aiSunk = gameReducer(
+      { ...afterAiFirst, phase: 'aiTurn', winner: null, animating: null },
+      { type: 'AI_FIRE', coord: { r: 9, c: 9 } },
+    )
+
+    expect(playerWon.toast?.message).toBe('You sunk the Destroyer!')
+    expect(aiSunk.toast?.message).toBe('Enemy sunk your Destroyer!')
+    expect(aiSunk.toast).not.toEqual(playerWon.toast)
+  })
+})
+
 describe('NEW_GAME', () => {
   it('resets every part of the game but keeps the difficulty', () => {
     const easy = gameReducer(readyState(), { type: 'SET_DIFFICULTY', difficulty: 'easy' })
@@ -254,6 +332,9 @@ describe('NEW_GAME', () => {
     expect(reset.ai.fired.size).toBe(0)
     expect(reset.ai.hits).toEqual([])
     expect(reset.ai.sunk).toEqual([])
+    expect(reset.battleLog).toEqual([])
+    expect(reset.nextLogId).toBe(0)
+    expect(reset.toast).toBeNull()
     expect(reset.stats).toEqual({ playerShots: 0, playerHits: 0, aiShots: 0, aiHits: 0 })
     expect(reset.animating).toBeNull()
     expect(reset.winner).toBeNull()

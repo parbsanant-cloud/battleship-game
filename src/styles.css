@@ -83,14 +83,20 @@ body {
 }
 
 .board {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(11, var(--cell));
   gap: var(--gap);
   padding: 0.75rem;
   width: max-content;
-  background: var(--surface);
+  background:
+    linear-gradient(120deg, rgba(32, 82, 110, 0.42), rgba(7, 22, 36, 0.08), rgba(32, 82, 110, 0.34)),
+    radial-gradient(circle at 20% 10%, rgba(79, 195, 247, 0.12), transparent 42%),
+    var(--surface);
+  background-size: 220% 220%, 160% 160%, auto;
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  animation: ocean-shimmer 28s ease-in-out infinite alternate;
 }
 
 .board__label {
@@ -103,6 +109,7 @@ body {
 }
 
 .cell {
+  position: relative;
   width: var(--cell);
   height: var(--cell);
   padding: 0;
@@ -111,6 +118,8 @@ body {
   background: #0b2033;
   cursor: pointer;
   transition:
+    transform 180ms ease,
+    filter 180ms ease,
     background-color 120ms ease,
     border-color 120ms ease;
 }
@@ -121,11 +130,14 @@ body {
 
 .cell:not(:disabled):hover {
   border-color: var(--accent);
+  filter: brightness(1.12) contrast(1.04);
+  transform: translateY(-2px);
 }
 
 .cell--ship {
   background: var(--ship);
   border-color: #8daabe;
+  animation: ship-pop 180ms ease-out;
 }
 
 .cell--revealed {
@@ -159,6 +171,7 @@ body {
   background: #8f303d;
   border-color: #f06a6a;
   box-shadow: inset 0 0 0 5px #c5444e;
+  animation: sunk-ship-flash 450ms ease-out;
 }
 
 .cell--anim-hit {
@@ -173,14 +186,28 @@ body {
   animation: sunk-pulse 400ms ease-out;
 }
 
+.cell--anim-sunk::before {
+  position: absolute;
+  inset: 2px;
+  border: 2px solid #ffad5c;
+  border-radius: 2px;
+  content: '';
+  pointer-events: none;
+  animation: sunk-ripple 450ms ease-out;
+}
+
 .cell--preview-valid {
-  background: var(--valid);
+  background: rgba(61, 220, 132, 0.32);
   border-color: #7ff0ad;
+  box-shadow: inset 0 0 0 2px rgba(61, 220, 132, 0.7);
+  animation: preview-fade 180ms ease-out;
 }
 
 .cell--preview-invalid {
-  background: var(--invalid);
+  background: rgba(255, 92, 92, 0.32);
   border-color: #ff9b9b;
+  box-shadow: inset 0 0 0 2px rgba(255, 92, 92, 0.7);
+  animation: preview-fade 180ms ease-out;
 }
 
 /* Panel */
@@ -392,6 +419,44 @@ body {
   gap: 1rem;
 }
 
+.battle-log {
+  align-self: center;
+  width: min(100%, 620px);
+  padding: 0.8rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.battle-log__title {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.battle-log__list {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.battle-log__entry,
+.battle-log__empty {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.battle-log__entry {
+  padding: 0.25rem 0.4rem;
+  background: var(--surface-raised);
+  border-radius: 4px;
+}
+
 .status {
   display: flex;
   align-items: center;
@@ -487,9 +552,22 @@ body {
   width: min(100%, 360px);
 }
 
+.game-over--victory {
+  border-color: var(--accent);
+  box-shadow: 0 0 24px rgba(79, 195, 247, 0.18);
+}
+
+.game-over--victory .panel__heading {
+  color: var(--accent);
+}
+
+.game-over--defeat {
+  border-color: #8f5360;
+}
+
 .game-over__stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.75rem;
   margin: 0;
   text-align: center;
@@ -511,6 +589,88 @@ body {
   margin: 0.15rem 0 0;
   font-size: 1.15rem;
   font-weight: 700;
+}
+
+.game-over__note {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.toast {
+  position: fixed;
+  top: 1.25rem;
+  left: 50%;
+  z-index: 10;
+  padding: 0.7rem 1rem;
+  color: var(--text);
+  background: var(--surface-raised);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: toast-in 220ms ease-out;
+}
+
+@keyframes ocean-shimmer {
+  from {
+    background-position: 0% 50%, 20% 10%, 0 0;
+  }
+
+  to {
+    background-position: 100% 50%, 80% 90%, 0 0;
+  }
+}
+
+@keyframes ship-pop {
+  from {
+    opacity: 0.45;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes preview-fade {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sunk-ripple {
+  from {
+    opacity: 0.9;
+    transform: scale(0.55);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes sunk-ship-flash {
+  50% {
+    filter: brightness(1.3);
+    box-shadow: inset 0 0 0 5px #c5444e, 0 0 12px rgba(240, 106, 106, 0.75);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
 
 @keyframes hit-pulse {
@@ -576,5 +736,11 @@ body {
   * {
     transition-duration: 0ms !important;
     animation: none !important;
+  }
+
+  .cell:not(:disabled):hover {
+    border-color: var(--accent);
+    filter: brightness(1.08) contrast(1.04);
+    transform: none;
   }
 }
