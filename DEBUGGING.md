@@ -1,6 +1,6 @@
 # Debugging Summary
 
-These are bugs actually encountered during development. The contrast between
+These are bugs encountered during development. The contrast between
 unit-test coverage, browser verification, and code review is intentional:
 some failures were observable only in the running UI, while others were best
 caught by tests or static review.
