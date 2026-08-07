@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import Board from './components/Board.tsx'
+import BattleLog from './components/BattleLog.tsx'
 import FleetStatus from './components/FleetStatus.tsx'
 import GameOver from './components/GameOver.tsx'
 import PlacementPanel from './components/PlacementPanel.tsx'
@@ -81,6 +82,12 @@ export default function App() {
     return () => window.clearTimeout(timer)
   }, [animating])
 
+  useEffect(() => {
+    if (state.toast === null) return
+    const timer = window.setTimeout(() => dispatch({ type: 'DISMISS_TOAST' }), 2200)
+    return () => window.clearTimeout(timer)
+  }, [state.toast])
+
   const animatedPlayerBoard =
     animating !== null && (phase === 'aiTurn' || state.winner === 'ai')
   const animatedEnemyBoard =
@@ -156,10 +163,18 @@ export default function App() {
             <FleetStatus title="Your fleet status" ships={state.playerFleet} reveal />
             <FleetStatus title="Enemy fleet status" ships={state.aiFleet} reveal={false} />
           </div>
+          <BattleLog entries={state.battleLog} />
+          {state.toast !== null && (
+            <div className="toast" aria-hidden="true">
+              {state.toast.message}
+            </div>
+          )}
           {phase === 'gameOver' && state.winner !== null && (
             <GameOver
               winner={state.winner}
               stats={state.stats}
+              playerShipsRemaining={state.playerFleet.filter((ship) => ship.hits < ship.length).length}
+              aiShipsRemaining={state.aiFleet.filter((ship) => ship.hits < ship.length).length}
               onPlayAgain={() => dispatch({ type: 'NEW_GAME' })}
             />
           )}

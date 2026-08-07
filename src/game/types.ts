@@ -43,6 +43,16 @@ export interface Stats {
   aiHits: number
 }
 
+export interface BattleLogEntry {
+  id: number
+  message: string
+}
+
+export interface Toast {
+  id: number
+  message: string
+}
+
 export interface Animation {
   index: number
   kind: 'hit' | 'miss' | 'sunk'
@@ -62,6 +72,9 @@ export interface GameState {
   orientation: Orientation
   message: string
   stats: Stats
+  battleLog: BattleLogEntry[]
+  nextLogId: number
+  toast: Toast | null
   animating: Animation | null
   winner: Player | null
 }
@@ -77,4 +90,5 @@ export type Action =
   | { type: 'PLAYER_FIRE'; coord: Coord }
   | { type: 'AI_FIRE'; coord: Coord }
   | { type: 'ANIMATION_DONE' }
+  | { type: 'DISMISS_TOAST' }
   | { type: 'NEW_GAME' }
