@@ -24,7 +24,7 @@ export function createInitialState(difficulty: GameState['difficulty'] = 'normal
     aiBoard: ai.board,
     playerFleet: [],
     aiFleet: ai.fleet,
-    ai: { fired: new Set(), hits: [] },
+    ai: { fired: new Set(), hits: [], sunk: [] },
     selectedShipId: FLEET[0].id,
     orientation: 'H',
     message: PLACEMENT_MESSAGE,

@@ -253,6 +253,7 @@ describe('NEW_GAME', () => {
     expect(reset.aiBoard.cells.filter((cell) => cell !== 'empty' && cell !== 'ship')).toEqual([])
     expect(reset.ai.fired.size).toBe(0)
     expect(reset.ai.hits).toEqual([])
+    expect(reset.ai.sunk).toEqual([])
     expect(reset.stats).toEqual({ playerShots: 0, playerHits: 0, aiShots: 0, aiHits: 0 })
     expect(reset.animating).toBeNull()
     expect(reset.winner).toBeNull()
