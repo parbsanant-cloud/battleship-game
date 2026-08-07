@@ -111,7 +111,7 @@ function firePlayerShot(state: GameState, coord: Coord): GameState {
       playerHits: state.stats.playerHits + (result.kind === 'miss' ? 0 : 1),
     },
     message: won ? gameMessage : shotMessage,
-    toast: toastMessage ? { id: state.nextLogId, message: toastMessage } : null,
+    toast: toastMessage ? { id: state.nextLogId, message: toastMessage } : state.toast,
     animating: animationFor(result),
   }
   const withShot = addLogEntry(next, shotMessage)
@@ -139,7 +139,7 @@ function fireAIShot(state: GameState, coord: Coord): GameState {
       aiHits: state.stats.aiHits + (result.kind === 'miss' ? 0 : 1),
     },
     message: lost ? gameMessage : shotMessage,
-    toast: toastMessage ? { id: state.nextLogId, message: toastMessage } : null,
+    toast: toastMessage ? { id: state.nextLogId, message: toastMessage } : state.toast,
     animating: animationFor(result),
   }
   const withShot = addLogEntry(next, shotMessage)

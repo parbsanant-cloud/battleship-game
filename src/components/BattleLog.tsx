@@ -6,7 +6,7 @@ interface BattleLogProps {
 
 export default function BattleLog({ entries }: BattleLogProps) {
   return (
-    <section className="battle-log" aria-hidden="true">
+    <section className="battle-log">
       <h2 className="battle-log__title">Battle log</h2>
       {entries.length === 0 ? (
         <p className="battle-log__empty">No shots yet.</p>

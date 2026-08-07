@@ -277,6 +277,43 @@ describe('battle log', () => {
   })
 })
 
+describe('toast', () => {
+  it('keeps a sink toast through a following non-sinking shot', () => {
+    const afterFirst = playerFires(duelState(), { r: 0, c: 0 })
+    const sunk = gameReducer(
+      { ...afterFirst, phase: 'playerTurn' },
+      { type: 'PLAYER_FIRE', coord: { r: 0, c: 1 } },
+    )
+    const afterMiss = gameReducer(
+      { ...sunk, phase: 'aiTurn', winner: null, animating: null },
+      { type: 'AI_FIRE', coord: { r: 5, c: 5 } },
+    )
+
+    expect(sunk.toast?.message).toBe('You sunk the Destroyer!')
+    expect(afterMiss.toast).toEqual(sunk.toast)
+  })
+
+  it('replaces an existing toast when a new ship sinks', () => {
+    const afterFirst = playerFires(duelState(), { r: 0, c: 0 })
+    const playerWon = gameReducer(
+      { ...afterFirst, phase: 'playerTurn' },
+      { type: 'PLAYER_FIRE', coord: { r: 0, c: 1 } },
+    )
+    const afterAiFirst = gameReducer(
+      { ...playerWon, phase: 'aiTurn', winner: null, animating: null },
+      { type: 'AI_FIRE', coord: { r: 9, c: 8 } },
+    )
+    const aiSunk = gameReducer(
+      { ...afterAiFirst, phase: 'aiTurn', winner: null, animating: null },
+      { type: 'AI_FIRE', coord: { r: 9, c: 9 } },
+    )
+
+    expect(playerWon.toast?.message).toBe('You sunk the Destroyer!')
+    expect(aiSunk.toast?.message).toBe('Enemy sunk your Destroyer!')
+    expect(aiSunk.toast).not.toEqual(playerWon.toast)
+  })
+})
+
 describe('NEW_GAME', () => {
   it('resets every part of the game but keeps the difficulty', () => {
     const easy = gameReducer(readyState(), { type: 'SET_DIFFICULTY', difficulty: 'easy' })
