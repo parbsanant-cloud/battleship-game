@@ -1,15 +1,24 @@
 import { describe, expect, it, vi } from 'vitest'
 import { chooseAIShot, updateAIMemory } from '../ai.ts'
-import { inBounds, neighbours, toIndex } from '../board.ts'
+import { CELL_COUNT, inBounds, neighbours, toCoord, toIndex } from '../board.ts'
 import { randomFleet } from '../placement.ts'
 import { applyShot, isFleetDestroyed } from '../rules.ts'
-import type { AIMemory, Coord } from '../types.ts'
+import type { AIMemory, Coord, ShipId } from '../types.ts'
 
-function memory(fired: Coord[] = [], hits: Coord[] = []): AIMemory {
+function memory(fired: Coord[] = [], hits: Coord[] = [], sunk: ShipId[] = []): AIMemory {
   return {
     fired: new Set(fired.map(toIndex)),
     hits: [...hits],
+    sunk: [...sunk],
   }
+}
+
+function memoryWithUnfired(unfired: Coord[], sunk: ShipId[] = []): AIMemory {
+  const open = new Set(unfired.map(toIndex))
+  const fired = Array.from({ length: CELL_COUNT }, (_, index) => index)
+    .filter((index) => !open.has(index))
+    .map(toCoord)
+  return memory(fired, [], sunk)
 }
 
 function expectValidShot(coord: Coord, state: AIMemory): void {
@@ -83,8 +92,92 @@ describe('chooseAIShot', () => {
   })
 
   it('uses only memory and difficulty as its shot-selection inputs', () => {
-    const state: AIMemory = { fired: new Set(), hits: [] }
+    const state: AIMemory = { fired: new Set(), hits: [], sunk: [] }
     expectValidShot(chooseAIShot(state, 'normal'), state)
+  })
+
+  it('avoids hunt pockets smaller than the smallest remaining ship', () => {
+    const isolated = { r: 1, c: 1 }
+    const pocket = [{ r: 3, c: 3 }, { r: 3, c: 4 }]
+    const corridor = [{ r: 7, c: 3 }, { r: 7, c: 4 }, { r: 7, c: 5 }]
+    const state = memoryWithUnfired([isolated, ...pocket, ...corridor], [
+      'carrier',
+      'battleship',
+      'submarine',
+      'destroyer',
+    ])
+
+    for (let attempt = 0; attempt < 200; attempt++) {
+      expect(corridor.map(toIndex)).toContain(toIndex(chooseAIShot(state, 'normal')))
+    }
+  })
+
+  it('does not choose an isolated unfired cell while a three-cell ship remains', () => {
+    const isolated = { r: 5, c: 5 }
+    const corridor = [{ r: 8, c: 1 }, { r: 8, c: 2 }, { r: 8, c: 3 }]
+    const state = memoryWithUnfired([isolated, ...corridor], [
+      'carrier',
+      'battleship',
+      'submarine',
+      'destroyer',
+    ])
+
+    for (let attempt = 0; attempt < 200; attempt++) {
+      expect(toIndex(chooseAIShot(state, 'normal'))).not.toBe(toIndex(isolated))
+    }
+  })
+
+  it('tracks the smallest remaining ship after the Destroyer sinks', () => {
+    const pocket = [{ r: 2, c: 2 }, { r: 2, c: 3 }]
+    const corridor = [{ r: 6, c: 1 }, { r: 6, c: 2 }, { r: 6, c: 3 }]
+    const sunkBeforeDestroyer: ShipId[] = ['carrier', 'battleship', 'submarine']
+    const withDestroyer = memoryWithUnfired([...pocket, ...corridor], sunkBeforeDestroyer)
+    const withoutDestroyer = memoryWithUnfired([...pocket, ...corridor], [
+      ...sunkBeforeDestroyer,
+      'destroyer',
+    ])
+
+    const pocketIndices = new Set(pocket.map(toIndex))
+    let pocketSelected = false
+    for (let attempt = 0; attempt < 200; attempt++) {
+      pocketSelected = pocketSelected || pocketIndices.has(toIndex(chooseAIShot(withDestroyer, 'normal')))
+    }
+    expect(pocketSelected).toBe(true)
+    for (let attempt = 0; attempt < 200; attempt++) {
+      expect(corridor.map(toIndex)).toContain(toIndex(chooseAIShot(withoutDestroyer, 'normal')))
+    }
+  })
+
+  it('falls back to a valid unfired hunt cell when no cell is feasible', () => {
+    const unfired = [{ r: 0, c: 0 }, { r: 5, c: 5 }]
+    const state = memoryWithUnfired(unfired, [
+      'carrier',
+      'battleship',
+      'submarine',
+      'destroyer',
+    ])
+    const shot = chooseAIShot(state, 'normal')
+
+    expect(unfired.map(toIndex)).toContain(toIndex(shot))
+    expectValidShot(shot, state)
+  })
+
+  it('keeps Easy mode random across feasible and infeasible cells', () => {
+    const isolated = { r: 0, c: 0 }
+    const corridor = [{ r: 5, c: 1 }, { r: 5, c: 2 }, { r: 5, c: 3 }]
+    const state = memoryWithUnfired([isolated, ...corridor], [
+      'carrier',
+      'battleship',
+      'submarine',
+      'destroyer',
+    ])
+    const random = vi.spyOn(Math, 'random').mockReturnValue(0)
+
+    for (let attempt = 0; attempt < 20; attempt++) {
+      expect(chooseAIShot(state, 'easy')).toEqual(isolated)
+    }
+
+    random.mockRestore()
   })
 })
 
@@ -132,6 +225,20 @@ describe('updateAIMemory', () => {
 
     expect(updated.hits).toEqual([hit])
     expect(updated.fired.has(toIndex(coord))).toBe(true)
+  })
+
+  it('records sunk ship identities without mutating the input sunk array', () => {
+    const original = memory([], [], ['carrier'])
+    const updated = updateAIMemory(original, { r: 2, c: 2 }, {
+      kind: 'sunk',
+      coord: { r: 2, c: 2 },
+      shipId: 'destroyer',
+      sunkCells: [{ r: 2, c: 2 }],
+    })
+
+    expect(original.sunk).toEqual(['carrier'])
+    expect(updated.sunk).toEqual(['carrier', 'destroyer'])
+    expect(updated.sunk).not.toBe(original.sunk)
   })
 })
 

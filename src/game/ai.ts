@@ -1,4 +1,4 @@
-import { CELL_COUNT, inBounds, neighbours, toCoord, toIndex } from './board.ts'
+import { CELL_COUNT, FLEET, inBounds, neighbours, toCoord, toIndex } from './board.ts'
 import type { ShotResult } from './rules.ts'
 import type { AIMemory, Coord, Difficulty } from './types.ts'
 
@@ -15,11 +15,44 @@ function pickRandomCoords(candidates: Coord[]): Coord {
   return pickRandom(candidates.map(toIndex))
 }
 
-function hunt(memory: AIMemory): Coord {
+function randomUnfired(memory: AIMemory): Coord {
   const candidates = Array.from({ length: CELL_COUNT }, (_, index) => index).filter(
     (index) => !memory.fired.has(index),
   )
   return pickRandom(candidates)
+}
+
+function smallestRemainingShipLength(memory: AIMemory): number {
+  const sunk = new Set(memory.sunk)
+  const lengths = FLEET.filter((spec) => !sunk.has(spec.id)).map((spec) => spec.length)
+  return lengths.length > 0 ? Math.min(...lengths) : 1
+}
+
+function hasFeasibleRun(memory: AIMemory, coord: Coord, length: number): boolean {
+  if (!isUnfired(memory, coord)) return false
+  if (length <= 1) return true
+
+  for (const horizontal of [true, false]) {
+    let run = 1
+    for (const direction of [-1, 1]) {
+      let variable = (horizontal ? coord.c : coord.r) + direction
+      while (true) {
+        const next = horizontal ? { r: coord.r, c: variable } : { r: variable, c: coord.c }
+        if (!isUnfired(memory, next)) break
+        run++
+        if (run >= length) return true
+        variable += direction
+      }
+    }
+  }
+  return false
+}
+
+function hunt(memory: AIMemory, length: number): Coord {
+  const candidates = Array.from({ length: CELL_COUNT }, (_, index) => index)
+    .filter((index) => !memory.fired.has(index))
+    .filter((index) => hasFeasibleRun(memory, toCoord(index), length))
+  return candidates.length > 0 ? pickRandom(candidates) : randomUnfired(memory)
 }
 
 function addCandidate(candidates: Set<number>, memory: AIMemory, coord: Coord): void {
@@ -92,25 +125,28 @@ function neighbourCandidates(memory: AIMemory): Coord[] {
 }
 
 export function chooseAIShot(memory: AIMemory, difficulty: Difficulty): Coord {
-  if (difficulty === 'easy') return hunt(memory)
+  if (difficulty === 'easy') return randomUnfired(memory)
   const line = lineCandidates(memory)
   if (line.length > 0) return pickRandomCoords(line)
   const adjacent = neighbourCandidates(memory)
   if (adjacent.length > 0) return pickRandomCoords(adjacent)
-  return hunt(memory)
+  return hunt(memory, smallestRemainingShipLength(memory))
 }
 
 export function updateAIMemory(memory: AIMemory, coord: Coord, result: ShotResult): AIMemory {
   let hits = [...memory.hits]
+  const sunk = [...memory.sunk]
   if (result.kind === 'hit') {
     hits.push(coord)
   } else if (result.kind === 'sunk') {
     const sunkIndices = new Set(result.sunkCells.map(toIndex))
     hits = hits.filter((hit) => !sunkIndices.has(toIndex(hit)))
+    sunk.push(result.shipId)
   }
 
   return {
     fired: new Set(memory.fired).add(toIndex(coord)),
     hits,
+    sunk,
   }
 }

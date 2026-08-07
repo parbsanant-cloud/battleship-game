@@ -29,10 +29,11 @@ export type Phase = 'placement' | 'playerTurn' | 'aiTurn' | 'gameOver'
 
 export type Difficulty = 'easy' | 'normal'
 
-/** What the AI knows: only where it has fired and what it was told in return. */
+/** What the AI knows: where it has fired and what shot results told it, including sunk ships. */
 export interface AIMemory {
   fired: Set<number>
   hits: Coord[]
+  sunk: ShipId[]
 }
 
 export interface Stats {

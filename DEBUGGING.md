@@ -97,3 +97,19 @@ caught by tests or static review.
 - **Validation:** After a shot, the cell is disabled, skipped by keyboard
   navigation, and a re-click leaves the shot count unchanged. Browser
   verification and code review.
+
+## 10. Normal hunt fired into impossible late-game pockets
+
+- **Symptom:** Late in a game, with only a three-cell ship left, the AI fired
+  at cells with fewer than three connected open squares: impossible locations.
+- **Root cause:** Normal hunt selected uniformly from every unfired cell
+  without checking whether any remaining ship could physically fit through it.
+- **Fix:** AI memory now records sunk ship identities from its own shot results.
+  Normal hunt derives the smallest remaining ship length and filters candidates
+  by the maximum contiguous unfired run through each cell in either
+  orientation. It retains a random-unfired fallback if filtering produces no
+  candidates; Easy mode and target-mode candidates are unchanged.
+- **Validation:** User gameplay observation found the defect, rather than unit
+  tests or code review. New unit tests cover isolated cells, undersized
+  pockets, sunk-ship length tracking, fallback behavior, Easy-mode behavior,
+  and full-game termination.

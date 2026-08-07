@@ -32,12 +32,14 @@ Easy mode fires uniformly at random among cells it has not fired at yet.
 Normal mode uses hunt/target behavior. It hunts randomly until it gets a hit,
 then chooses unfired orthogonal neighbours. Once two unresolved hits are
 aligned, it extends along that axis, including filling an unfired interior gap.
-When a ship sinks, only that ship's cells are removed from unresolved-hit
-memory. Hits belonging to an adjacent ship that is still afloat remain, so the
-AI stays in target mode.
+It also tracks which ships it has sunk from its own shot results and skips hunt
+cells too cramped to hold the smallest ship still afloat. When a ship sinks,
+only that ship's cells are removed from unresolved-hit memory. Hits belonging
+to an adjacent ship that is still afloat remain, so the AI stays in target mode.
 
 The shot-selection function is deliberately fair: `chooseAIShot` receives only
-`AIMemory` (fired indices and unresolved hit coordinates) and the difficulty.
+`AIMemory` (fired indices, unresolved hit coordinates, and the ships its own
+shots have sunk) and the difficulty.
 It never receives the player's board or fleet, so it cannot see hidden ships.
 
 ## Tech stack
@@ -160,4 +162,7 @@ function signatures, state shape, and implementation tradeoffs.
 2. Normal mode assumes two aligned unresolved hits belong to one ship. Two
    adjacent ships in the same row or column can occasionally cause a
    mis-target; the AI self-corrects on the resulting miss.
-3. There is no persistence, so refreshing the page restarts the game.
+3. The feasibility check applies only during hunting. Target-mode follow-up
+   shots use their own hit-anchored reasoning and are not feasibility-filtered.
+4. Parity and probability-density hunting remain deliberately out of scope.
+5. There is no persistence, so refreshing the page restarts the game.
