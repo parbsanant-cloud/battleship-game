@@ -256,7 +256,7 @@ describe('battle log', () => {
     }
 
     expect(state.battleLog).toHaveLength(8)
-    expect(state.battleLog[0].message).toBe('You missed.')
+    expect(state.battleLog[0].message).toBe('Splash. No contact.')
     expect(state.battleLog.map((entry) => entry.id)).toEqual(
       [...state.battleLog].sort((a, b) => b.id - a.id).map((entry) => entry.id),
     )
@@ -271,8 +271,8 @@ describe('battle log', () => {
     )
 
     expect(won.battleLog.slice(0, 2).map((entry) => entry.message)).toEqual([
-      'You win! The enemy fleet is destroyed.',
-      'You sank the enemy Destroyer!',
+      'Mission accomplished. Enemy fleet neutralized.',
+      'Enemy Destroyer neutralized.',
     ])
   })
 })
@@ -289,7 +289,7 @@ describe('toast', () => {
       { type: 'AI_FIRE', coord: { r: 5, c: 5 } },
     )
 
-    expect(sunk.toast?.message).toBe('You sunk the Destroyer!')
+    expect(sunk.toast?.message).toBe('Enemy Destroyer neutralized.')
     expect(afterMiss.toast).toEqual(sunk.toast)
   })
 
@@ -308,8 +308,8 @@ describe('toast', () => {
       { type: 'AI_FIRE', coord: { r: 9, c: 9 } },
     )
 
-    expect(playerWon.toast?.message).toBe('You sunk the Destroyer!')
-    expect(aiSunk.toast?.message).toBe('Enemy sunk your Destroyer!')
+    expect(playerWon.toast?.message).toBe('Enemy Destroyer neutralized.')
+    expect(aiSunk.toast?.message).toBe('Our Destroyer has been lost.')
     expect(aiSunk.toast).not.toEqual(playerWon.toast)
   })
 })

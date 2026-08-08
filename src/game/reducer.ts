@@ -55,11 +55,11 @@ function shipName(fleet: Ship[], id: ShipId): string {
 function playerMessage(result: ShotResult, fleet: Ship[]): string {
   switch (result.kind) {
     case 'miss':
-      return 'You missed.'
+      return 'Splash. No contact.'
     case 'hit':
-      return 'Direct hit!'
+      return 'Direct hit.'
     case 'sunk':
-      return `You sank the enemy ${shipName(fleet, result.shipId)}!`
+      return `Enemy ${shipName(fleet, result.shipId)} neutralized.`
     case 'invalid':
       return ''
   }
@@ -68,22 +68,22 @@ function playerMessage(result: ShotResult, fleet: Ship[]): string {
 function aiMessage(result: ShotResult, fleet: Ship[]): string {
   switch (result.kind) {
     case 'miss':
-      return 'The enemy missed.'
+      return 'Enemy fire missed.'
     case 'hit':
-      return 'The enemy hit your ship.'
+      return "Incoming fire — we've been hit."
     case 'sunk':
-      return `The enemy sank your ${shipName(fleet, result.shipId)}!`
+      return `Our ${shipName(fleet, result.shipId)} has been lost.`
     case 'invalid':
       return ''
   }
 }
 
 function playerToast(result: ShotResult, fleet: Ship[]): string | null {
-  return result.kind === 'sunk' ? `You sunk the ${shipName(fleet, result.shipId)}!` : null
+  return result.kind === 'sunk' ? `Enemy ${shipName(fleet, result.shipId)} neutralized.` : null
 }
 
 function aiToast(result: ShotResult, fleet: Ship[]): string | null {
-  return result.kind === 'sunk' ? `Enemy sunk your ${shipName(fleet, result.shipId)}!` : null
+  return result.kind === 'sunk' ? `Our ${shipName(fleet, result.shipId)} has been lost.` : null
 }
 
 function animationFor(result: ShotResult): GameState['animating'] {
@@ -98,7 +98,7 @@ function firePlayerShot(state: GameState, coord: Coord): GameState {
   const won = isFleetDestroyed(fleet)
   const shotMessage = playerMessage(result, fleet)
   const toastMessage = playerToast(result, fleet)
-  const gameMessage = 'You win! The enemy fleet is destroyed.'
+  const gameMessage = 'Mission accomplished. Enemy fleet neutralized.'
   const next = {
     ...state,
     phase: won ? 'gameOver' : state.phase,
@@ -125,7 +125,7 @@ function fireAIShot(state: GameState, coord: Coord): GameState {
   const lost = isFleetDestroyed(fleet)
   const shotMessage = aiMessage(result, fleet)
   const toastMessage = aiToast(result, fleet)
-  const gameMessage = 'The enemy sank your fleet. You lose.'
+  const gameMessage = 'Mission failed. Our fleet has been destroyed.'
   const next = {
     ...state,
     phase: lost ? 'gameOver' : state.phase,
