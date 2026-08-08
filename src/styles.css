@@ -289,11 +289,6 @@ body::after {
   width: 100%;
   height: 100%;
   overflow: visible;
-  fill: rgba(38, 12, 20, 0.9);
-  stroke: #d85b68;
-  stroke-width: 4;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 0 4px rgba(240, 106, 106, 0.5));
   pointer-events: none;
 }
 
@@ -308,11 +303,36 @@ body::after {
 }
 
 .sunk-silhouette__detail {
-  fill: rgba(255, 155, 155, 0.72);
-  stroke: #ff9b9b;
+  fill: rgba(107, 126, 134, 0.52);
+  stroke: #98a8af;
   stroke-width: 2;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
+}
+
+.sunk-silhouette__hull {
+  fill: rgba(18, 28, 34, 0.98);
+  stroke: #758991;
+  stroke-width: 4;
+  stroke-linejoin: round;
+  filter:
+    drop-shadow(0 0 4px rgba(240, 106, 106, 0.28))
+    drop-shadow(0 0 1px rgba(240, 106, 106, 0.42));
+}
+
+.sunk-silhouette__detail--dark {
+  fill: rgba(16, 27, 34, 0.9);
+  stroke: #465b64;
+}
+
+.sunk-silhouette__detail--scorch {
+  fill: rgba(3, 9, 13, 0.9);
+  stroke: none;
+  filter: blur(1.5px);
+}
+
+.sunk-silhouette__detail--heavy {
+  stroke-width: 5;
 }
 
 /* Landing */
