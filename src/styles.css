@@ -237,7 +237,7 @@ input {
 
 .command-rail {
   display: grid;
-  grid-template-columns: minmax(14rem, 1fr) minmax(6rem, 8rem) minmax(31rem, 1.8fr) auto;
+  grid-template-columns: minmax(14rem, 1fr) minmax(6rem, 8rem) minmax(26rem, 1.3fr) minmax(0, 1.4fr);
   gap: var(--space-4);
   align-items: center;
   margin-bottom: var(--space-6);
@@ -317,11 +317,17 @@ input {
 .command-rail__controls {
   display: flex;
   flex-wrap: wrap;
+  min-width: 0;
   justify-content: flex-end;
   gap: var(--space-2);
 }
 
-.audio-toggle,
+.command-rail__controls--mission {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.rail-control,
 .button,
 .ship {
   transition:
@@ -331,7 +337,7 @@ input {
     transform var(--duration-fast) var(--ease);
 }
 
-.audio-toggle {
+.rail-control {
   padding: var(--space-2) var(--space-3);
   color: var(--mist-300);
   font-family: var(--font-mono);
@@ -343,10 +349,23 @@ input {
   cursor: pointer;
 }
 
-.audio-toggle:hover,
-.audio-toggle:focus-visible {
+.rail-control:hover,
+.rail-control:focus-visible {
   color: var(--signal-bright);
   border-color: var(--signal);
+}
+
+.rail-control--primary {
+  color: var(--ink-950);
+  background: var(--signal);
+  border-color: var(--signal-bright);
+}
+
+.rail-control--primary:hover,
+.rail-control--primary:focus-visible {
+  color: var(--ink-950);
+  background: var(--signal-bright);
+  border-color: var(--signal-bright);
 }
 
 .button {
@@ -1122,6 +1141,31 @@ input {
   animation: game-over-enter var(--duration-base) var(--ease);
 }
 
+.game-over__close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  padding: 0;
+  color: var(--mist-300);
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  line-height: 1;
+  background: transparent;
+  border: var(--line) solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.game-over__close:hover,
+.game-over__close:focus-visible {
+  color: var(--signal-bright);
+  border-color: var(--signal);
+}
+
 .game-over--victory {
   border-color: var(--signal);
 }
@@ -1482,9 +1526,16 @@ input {
 
   .command-rail__controls {
     display: grid;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .command-rail__controls .audio-toggle {
+  .command-rail__readouts {
+    grid-row: 3;
+  }
+
+  .command-rail__controls .rail-control {
     padding-inline: var(--space-2);
   }
 

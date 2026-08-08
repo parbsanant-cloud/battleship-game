@@ -1,3 +1,4 @@
+import type { RefObject } from 'react'
 import type { Difficulty, Phase, Player, Stats } from '../game/types.ts'
 
 interface CommandRailProps {
@@ -7,8 +8,12 @@ interface CommandRailProps {
   stats: Stats
   soundMuted: boolean
   voiceMuted: boolean
+  showGameOverActions: boolean
+  playAgainRef: RefObject<HTMLButtonElement | null>
   onToggleSound: () => void
   onToggleVoice: () => void
+  onShowReport: () => void
+  onPlayAgain: () => void
 }
 
 function accuracy(hits: number, shots: number): string {
@@ -27,8 +32,12 @@ export default function CommandRail({
   stats,
   soundMuted,
   voiceMuted,
+  showGameOverActions,
+  playAgainRef,
   onToggleSound,
   onToggleVoice,
+  onShowReport,
+  onPlayAgain,
 }: CommandRailProps) {
   return (
     <header className="command-rail">
@@ -66,10 +75,28 @@ export default function CommandRail({
           <strong>{accuracy(stats.playerHits, stats.playerShots)}</strong>
         </div>
       </div>
-      <div className="command-rail__controls" aria-label="Audio controls">
+      <div
+        className={`command-rail__controls${showGameOverActions ? ' command-rail__controls--mission' : ''}`}
+        aria-label="Mission and audio controls"
+      >
+        {showGameOverActions && (
+          <>
+            <button type="button" className="rail-control" onClick={onShowReport}>
+              Mission report
+            </button>
+            <button
+              ref={playAgainRef}
+              type="button"
+              className="rail-control rail-control--primary"
+              onClick={onPlayAgain}
+            >
+              Play Again
+            </button>
+          </>
+        )}
         <button
           type="button"
-          className="audio-toggle"
+          className="rail-control"
           aria-label={soundMuted ? 'Turn sound on' : 'Mute sound'}
           aria-pressed={!soundMuted}
           onClick={onToggleSound}
@@ -78,7 +105,7 @@ export default function CommandRail({
         </button>
         <button
           type="button"
-          className="audio-toggle"
+          className="rail-control"
           aria-label={voiceMuted ? 'Turn voice callouts on' : 'Mute voice callouts'}
           aria-pressed={!voiceMuted}
           onClick={onToggleVoice}

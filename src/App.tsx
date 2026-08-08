@@ -58,6 +58,7 @@ export default function App() {
   const [exiting, setExiting] = useState(false)
   const [soundMuted, setSoundMuted] = useState(readSoundMuted)
   const [voiceMuted, setVoiceMuted] = useState(readVoiceMuted)
+  const [reportDismissed, setReportDismissed] = useState(false)
   const [sunkFeedback, setSunkFeedback] = useState<{
     shipId: ShipId
     fleet: 'player' | 'ai'
@@ -68,11 +69,26 @@ export default function App() {
   const lastAnimationRef = useRef<string | null>(null)
   const lastVoiceAnimationRef = useRef<string | null>(null)
   const announcedWinnerRef = useRef<GameState['winner']>(null)
+  const previousPhaseRef = useRef<GameState['phase']>(state.phase)
+  const reportPlayAgainRef = useRef<HTMLButtonElement>(null)
   const stateRef = useRef<GameState>(state)
   stateRef.current = state
 
   const { phase, playerBoard, playerFleet, selectedShipId, orientation, animating } = state
   const placing = phase === 'placement'
+
+  useEffect(() => {
+    if (phase !== 'gameOver' || previousPhaseRef.current !== 'gameOver') {
+      setReportDismissed(false)
+    }
+    previousPhaseRef.current = phase
+  }, [phase])
+
+  useEffect(() => {
+    if (phase === 'gameOver' && reportDismissed) {
+      reportPlayAgainRef.current?.focus()
+    }
+  }, [phase, reportDismissed])
 
   useEffect(() => {
     const audio = createCombatAudioController(readSoundMuted(), readVoiceMuted())
@@ -160,7 +176,16 @@ export default function App() {
 
   const playAgain = useCallback(() => {
     audioRef.current?.clearVoiceQueue()
+    setReportDismissed(false)
     dispatch({ type: 'NEW_GAME' })
+  }, [])
+
+  const dismissReport = useCallback(() => {
+    setReportDismissed(true)
+  }, [])
+
+  const showReport = useCallback(() => {
+    setReportDismissed(false)
   }, [])
 
   useEffect(() => {
@@ -298,8 +323,12 @@ export default function App() {
         stats={state.stats}
         soundMuted={soundMuted}
         voiceMuted={voiceMuted}
+        showGameOverActions={phase === 'gameOver'}
+        playAgainRef={reportPlayAgainRef}
         onToggleSound={toggleSound}
         onToggleVoice={toggleVoice}
+        onShowReport={showReport}
+        onPlayAgain={playAgain}
       />
       {placing ? (
         <main className="deployment-screen screen-enter">
@@ -367,13 +396,14 @@ export default function App() {
             />
           </div>
           <Comms entries={state.battleLog} message={state.message} phase={phase} winner={state.winner} />
-          {phase === 'gameOver' && state.winner !== null && (
+          {phase === 'gameOver' && state.winner !== null && !reportDismissed && (
             <GameOver
               winner={state.winner}
               stats={state.stats}
               difficulty={state.difficulty}
               playerShipsRemaining={state.playerFleet.filter((ship) => ship.hits < ship.length).length}
               aiShipsRemaining={state.aiFleet.filter((ship) => ship.hits < ship.length).length}
+              onDismiss={dismissReport}
               onPlayAgain={playAgain}
             />
           )}

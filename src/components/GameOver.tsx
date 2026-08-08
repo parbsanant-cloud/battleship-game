@@ -7,6 +7,7 @@ interface GameOverProps {
   playerShipsRemaining: number
   aiShipsRemaining: number
   difficulty: Difficulty
+  onDismiss: () => void
   onPlayAgain: () => void
 }
 
@@ -16,6 +17,7 @@ export default function GameOver({
   playerShipsRemaining,
   aiShipsRemaining,
   difficulty,
+  onDismiss,
   onPlayAgain,
 }: GameOverProps) {
   const playAgainRef = useRef<HTMLButtonElement>(null)
@@ -26,7 +28,15 @@ export default function GameOver({
 
   useEffect(() => {
     playAgainRef.current?.focus()
-  }, [])
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== 'Escape') return
+      event.preventDefault()
+      onDismiss()
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [onDismiss])
 
   return (
     <>
@@ -39,6 +49,14 @@ export default function GameOver({
       >
         <div className="game-over-modal__backdrop" aria-hidden="true" />
         <section className={`panel game-over game-over--${victory ? 'victory' : 'defeat'}`}>
+          <button
+            type="button"
+            className="game-over__close"
+            aria-label="Close mission report"
+            onClick={onDismiss}
+          >
+            ×
+          </button>
           <div aria-live="assertive">
             <h2 id="game-over-heading" className="panel__heading game-over__title">
               {victory ? 'Mission accomplished' : 'Mission failed'}
