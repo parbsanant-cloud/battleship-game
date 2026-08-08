@@ -1,12 +1,13 @@
 import { FLEET } from '../game/board.ts'
-import type { Ship } from '../game/types.ts'
+import type { Ship, ShipId } from '../game/types.ts'
 
 interface FleetStatusProps {
   title: string
   ships: Ship[]
+  highlightShipId?: ShipId | null
 }
 
-export default function FleetStatus({ title, ships }: FleetStatusProps) {
+export default function FleetStatus({ title, ships, highlightShipId = null }: FleetStatusProps) {
   return (
     <section className="fleet-status" aria-label={title}>
       <h2 className="fleet-status__title">{title}</h2>
@@ -19,7 +20,9 @@ export default function FleetStatus({ title, ships }: FleetStatusProps) {
           return (
             <li
               key={spec.id}
-              className={`fleet-status__row fleet-status__row--${status}`}
+              className={`fleet-status__row fleet-status__row--${status}${
+                highlightShipId === spec.id ? ' fleet-status__row--highlight' : ''
+              }`}
             >
               <span className="fleet-status__name">{spec.name}</span>
               <span className="fleet-status__badge">{status}</span>
