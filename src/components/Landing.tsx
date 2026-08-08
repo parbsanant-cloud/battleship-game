@@ -15,6 +15,19 @@ export default function Landing({
   return (
     <main className="landing screen-enter">
       <div className="landing__card">
+        <svg
+          className="landing__mark"
+          viewBox="0 0 48 48"
+          role="img"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <circle cx="24" cy="24" r="21" />
+          <circle cx="24" cy="24" r="13" />
+          <circle cx="24" cy="24" r="2.5" className="landing__mark-hub" />
+          <path d="M24 3v42M3 24h42" />
+          <path d="M24 24 41 13" className="landing__mark-sweep" />
+        </svg>
         <h1 className="landing__title">Battleship</h1>
         <p className="landing__subtitle">
           Take command of your fleet and defeat an adaptive AI commander.
