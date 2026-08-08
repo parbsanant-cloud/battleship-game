@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
-import { createCombatAudioController, type CombatAudioController } from './audio.ts'
+import {
+  createCombatAudioController,
+  type CombatAudioController,
+  type VoiceCue,
+} from './audio.ts'
 import Board from './components/Board.tsx'
 import BattleLog from './components/BattleLog.tsx'
 import FleetStatus from './components/FleetStatus.tsx'
@@ -32,6 +36,7 @@ function ignoresShortcut(target: EventTarget | null): boolean {
 }
 
 const SOUND_MUTED_KEY = 'battleship-sound-muted'
+const VOICE_MUTED_KEY = 'battleship-voice-muted'
 
 function readSoundMuted(): boolean {
   try {
@@ -41,12 +46,25 @@ function readSoundMuted(): boolean {
   }
 }
 
+function readVoiceMuted(): boolean {
+  try {
+    return window.localStorage.getItem(VOICE_MUTED_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
+function sinkVoiceCue(fleet: 'player' | 'ai', shipId: ShipId): VoiceCue {
+  return `${fleet === 'ai' ? 'player' : 'ai'}-sink-${shipId}` as VoiceCue
+}
+
 export default function App() {
   const [state, dispatch] = useReducer(gameReducer, 'normal', createInitialState)
   const [hover, setHover] = useState<Coord | null>(null)
   const [launched, setLaunched] = useState(false)
   const [exiting, setExiting] = useState(false)
   const [soundMuted, setSoundMuted] = useState(readSoundMuted)
+  const [voiceMuted, setVoiceMuted] = useState(readVoiceMuted)
   const [sunkFeedback, setSunkFeedback] = useState<{
     shipId: ShipId
     fleet: 'player' | 'ai'
@@ -55,6 +73,7 @@ export default function App() {
   const sunkFeedbackTimer = useRef<number | null>(null)
   const audioRef = useRef<CombatAudioController | null>(null)
   const lastAnimationRef = useRef<string | null>(null)
+  const lastVoiceAnimationRef = useRef<string | null>(null)
   const announcedWinnerRef = useRef<GameState['winner']>(null)
   const stateRef = useRef<GameState>(state)
   stateRef.current = state
@@ -63,7 +82,7 @@ export default function App() {
   const placing = phase === 'placement'
 
   useEffect(() => {
-    const audio = createCombatAudioController(readSoundMuted())
+    const audio = createCombatAudioController(readSoundMuted(), readVoiceMuted())
     audioRef.current = audio
     return () => {
       audio.dispose()
@@ -79,6 +98,15 @@ export default function App() {
       // Audio preference remains session-local when storage is unavailable.
     }
   }, [soundMuted])
+
+  useEffect(() => {
+    audioRef.current?.setVoiceMuted(voiceMuted)
+    try {
+      window.localStorage.setItem(VOICE_MUTED_KEY, String(voiceMuted))
+    } catch {
+      // Voice preference remains session-local when storage is unavailable.
+    }
+  }, [voiceMuted])
 
   useEffect(() => {
     if (animating === null) {
@@ -101,17 +129,45 @@ export default function App() {
   }, [animating])
 
   useEffect(() => {
+    if (animating === null) {
+      lastVoiceAnimationRef.current = null
+      return
+    }
+
+    const playerFired = phase === 'playerTurn' || state.winner === 'player'
+    const animationKey = `${animating.kind}:${animating.index}:${playerFired ? 'player' : 'ai'}`
+    if (lastVoiceAnimationRef.current === animationKey) return
+
+    if (animating.kind === 'hit') {
+      lastVoiceAnimationRef.current = animationKey
+      audioRef.current?.enqueueVoice(playerFired ? 'player-hit' : 'ai-hit')
+    } else if (animating.kind === 'sunk' && sunkFeedback !== null) {
+      lastVoiceAnimationRef.current = `${animationKey}:${sunkFeedback.shipId}`
+      audioRef.current?.enqueueVoice(sinkVoiceCue(sunkFeedback.fleet, sunkFeedback.shipId))
+    }
+  }, [animating, phase, state.winner, sunkFeedback])
+
+  useEffect(() => {
     if (phase !== 'gameOver' || state.winner === null) {
       if (phase !== 'gameOver') announcedWinnerRef.current = null
       return
     }
     if (announcedWinnerRef.current === state.winner) return
     announcedWinnerRef.current = state.winner
-    audioRef.current?.play(state.winner === 'player' ? 'victory' : 'defeat')
+    audioRef.current?.enqueueVoice(state.winner === 'player' ? 'victory' : 'defeat')
   }, [phase, state.winner])
 
   const toggleSound = useCallback(() => {
     setSoundMuted((muted) => !muted)
+  }, [])
+
+  const toggleVoice = useCallback(() => {
+    setVoiceMuted((muted) => !muted)
+  }, [])
+
+  const playAgain = useCallback(() => {
+    audioRef.current?.clearVoiceQueue()
+    dispatch({ type: 'NEW_GAME' })
   }, [])
 
   useEffect(() => {
@@ -226,15 +282,26 @@ export default function App() {
   if (!launched) {
     return (
       <div className="app app--landing">
-        <button
-          type="button"
-          className="audio-toggle audio-toggle--landing"
-          aria-label={soundMuted ? 'Turn sound on' : 'Mute sound'}
-          aria-pressed={!soundMuted}
-          onClick={toggleSound}
-        >
-          {soundMuted ? 'Sound off' : 'Sound on'}
-        </button>
+        <div className="audio-controls audio-controls--landing">
+          <button
+            type="button"
+            className="audio-toggle"
+            aria-label={soundMuted ? 'Turn sound on' : 'Mute sound'}
+            aria-pressed={!soundMuted}
+            onClick={toggleSound}
+          >
+            {soundMuted ? 'Sound off' : 'Sound on'}
+          </button>
+          <button
+            type="button"
+            className="audio-toggle"
+            aria-label={voiceMuted ? 'Turn voice callouts on' : 'Mute voice callouts'}
+            aria-pressed={!voiceMuted}
+            onClick={toggleVoice}
+          >
+            {voiceMuted ? 'Voice off' : 'Voice on'}
+          </button>
+        </div>
         <Landing
           difficulty={state.difficulty}
           exiting={exiting}
@@ -252,15 +319,26 @@ export default function App() {
           <h1 className="app__title">Battleship</h1>
           <p className="app__tagline">Position your fleet, then take on the AI.</p>
         </div>
-        <button
-          type="button"
-          className="audio-toggle"
-          aria-label={soundMuted ? 'Turn sound on' : 'Mute sound'}
-          aria-pressed={!soundMuted}
-          onClick={toggleSound}
-        >
-          {soundMuted ? 'Sound off' : 'Sound on'}
-        </button>
+        <div className="audio-controls">
+          <button
+            type="button"
+            className="audio-toggle"
+            aria-label={soundMuted ? 'Turn sound on' : 'Mute sound'}
+            aria-pressed={!soundMuted}
+            onClick={toggleSound}
+          >
+            {soundMuted ? 'Sound off' : 'Sound on'}
+          </button>
+          <button
+            type="button"
+            className="audio-toggle"
+            aria-label={voiceMuted ? 'Turn voice callouts on' : 'Mute voice callouts'}
+            aria-pressed={!voiceMuted}
+            onClick={toggleVoice}
+          >
+            {voiceMuted ? 'Voice off' : 'Voice on'}
+          </button>
+        </div>
       </header>
 
       {placing ? (
@@ -361,7 +439,7 @@ export default function App() {
               stats={state.stats}
               playerShipsRemaining={state.playerFleet.filter((ship) => ship.hits < ship.length).length}
               aiShipsRemaining={state.aiFleet.filter((ship) => ship.hits < ship.length).length}
-              onPlayAgain={() => dispatch({ type: 'NEW_GAME' })}
+              onPlayAgain={playAgain}
             />
           )}
         </main>
