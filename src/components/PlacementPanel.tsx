@@ -30,9 +30,13 @@ export default function PlacementPanel({
   onDifficultyChange,
 }: PlacementPanelProps) {
   return (
-    <aside className="panel">
-      <section className="panel__section">
-        <h2 className="panel__heading">Your fleet</h2>
+    <aside className="deployment-panel">
+      <div className="deployment-panel__intro">
+        <span className="tactical-label">Deployment manifest</span>
+        <h2 className="deployment-panel__title">Asset roster</h2>
+        <p className="deployment-panel__instruction">Place all assets, then commence engagement.</p>
+      </div>
+      <section className="deployment-panel__section">
         <ul className="ships">
           {FLEET.map((spec) => {
             const placed = fleet.some((ship) => ship.id === spec.id)
@@ -50,7 +54,7 @@ export default function PlacementPanel({
                   <span className="ship__pips" aria-hidden="true">
                     {'\u25A0'.repeat(spec.length)}
                   </span>
-                  <span className="ship__status">{placed ? 'Placed' : `${spec.length} cells`}</span>
+                  <span className="ship__status">{placed ? 'Ready' : `${spec.length} cells`}</span>
                 </button>
               </li>
             )
@@ -58,8 +62,8 @@ export default function PlacementPanel({
         </ul>
       </section>
 
-      <section className="panel__section">
-        <h2 className="panel__heading">Placement</h2>
+      <section className="deployment-panel__section deployment-panel__controls">
+        <span className="tactical-label">Formation</span>
         <button type="button" className="button" onClick={onRotate}>
           Rotate — {orientation === 'H' ? 'Horizontal' : 'Vertical'}
           <kbd className="kbd">R</kbd>
@@ -74,7 +78,7 @@ export default function PlacementPanel({
         </div>
       </section>
 
-      <section className="panel__section">
+      <section className="deployment-panel__section">
         <DifficultySelect
           legend="Opponent"
           name="difficulty"
@@ -84,11 +88,11 @@ export default function PlacementPanel({
       </section>
 
       <button type="button" className="button button--primary" disabled={!canStart} onClick={onStart}>
-        Start Game
+        Commence Engagement
       </button>
       {!canStart && (
-        <p className="panel__note">
-          Place all {FLEET.length} ships to begin ({fleet.length}/{FLEET.length} placed).
+        <p className="deployment-panel__note">
+          Awaiting {FLEET.length - fleet.length} asset{FLEET.length - fleet.length === 1 ? '' : 's'} before engagement.
         </p>
       )}
     </aside>

@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react'
-import type { Player, Stats } from '../game/types.ts'
+import type { Difficulty, Player, Stats } from '../game/types.ts'
 
 interface GameOverProps {
   winner: Player
   stats: Stats
   playerShipsRemaining: number
   aiShipsRemaining: number
+  difficulty: Difficulty
   onPlayAgain: () => void
 }
 
@@ -14,6 +15,7 @@ export default function GameOver({
   stats,
   playerShipsRemaining,
   aiShipsRemaining,
+  difficulty,
   onPlayAgain,
 }: GameOverProps) {
   const playAgainRef = useRef<HTMLButtonElement>(null)
@@ -45,6 +47,7 @@ export default function GameOver({
               {victory ? 'Enemy fleet destroyed.' : 'Enemy fleet prevailed.'}
             </p>
           </div>
+          <div className="game-over__stamp">After-action report // {difficulty}</div>
           <dl className="game-over__stats">
             <div>
               <dt>Your accuracy</dt>
@@ -73,6 +76,10 @@ export default function GameOver({
             <div>
               <dt>Enemy ships left</dt>
               <dd>{aiShipsRemaining}</dd>
+            </div>
+            <div>
+              <dt>Classification</dt>
+              <dd>Eyes only</dd>
             </div>
           </dl>
           {!victory && (
