@@ -75,7 +75,21 @@ body::after {
   padding: 2rem 1rem 3rem;
 }
 
+.app--landing {
+  position: relative;
+}
+
+.audio-toggle--landing {
+  position: absolute;
+  top: 2rem;
+  right: 1rem;
+}
+
 .app__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
@@ -90,6 +104,24 @@ body::after {
 .app__tagline {
   margin: 0.25rem 0 0;
   color: var(--text-muted);
+}
+
+.audio-toggle {
+  flex: 0 0 auto;
+  padding: 0.45rem 0.7rem;
+  color: var(--text-muted);
+  background: rgba(15, 42, 64, 0.86);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.audio-toggle:hover {
+  color: var(--text);
+  border-color: var(--accent);
 }
 
 .layout {
@@ -212,7 +244,7 @@ body::after {
 }
 
 .cell--anim-hit {
-  animation: hit-pulse 280ms ease-out;
+  animation: hit-pulse 320ms ease-out;
 }
 
 .cell--anim-hit::before,
@@ -226,7 +258,7 @@ body::after {
 
 .cell--anim-hit::before {
   border: 2px solid #ffb35c;
-  animation: impact-ring 260ms ease-out;
+  animation: impact-ring 300ms ease-out;
 }
 
 .cell--anim-hit::after {
@@ -244,12 +276,13 @@ body::after {
   content: '';
   pointer-events: none;
   transform: translate(-50%, -50%);
-  animation: hit-burst 280ms ease-out both;
+  animation: hit-burst 320ms ease-out both;
 }
 
 .cell--anim-miss::before {
   border: 2px solid rgba(143, 176, 198, 0.85);
-  animation: water-ripple 380ms ease-out;
+  inset: -3px;
+  animation: water-ripple 430ms ease-out;
 }
 
 .cell--anim-miss::after {
@@ -259,8 +292,9 @@ body::after {
   width: 7px;
   height: 7px;
   margin: 0;
+  background: #d9f5ff;
   transform: translate(-50%, -50%);
-  animation: miss-splash 380ms ease-out both;
+  animation: miss-splash 430ms ease-out both;
 }
 
 .cell--anim-miss {
@@ -297,7 +331,7 @@ body::after {
   content: '';
   pointer-events: none;
   transform: translate(-50%, -50%);
-  animation: sunk-burst 420ms ease-out both;
+  animation: sunk-burst 440ms ease-out both;
 }
 
 .cell--preview-valid {
@@ -1065,24 +1099,34 @@ body::after {
 @keyframes water-ripple {
   from {
     opacity: 0.85;
-    transform: scale(0.35);
+    transform: scale(0.25);
   }
   to {
     opacity: 0;
-    transform: scale(1.25);
+    transform: scale(1.5);
   }
 }
 
 @keyframes miss-splash {
   0% {
-    opacity: 0.95;
+    opacity: 1;
     transform: translate(-50%, -50%) scale(0.35);
-    box-shadow: 0 0 0 0 rgba(143, 176, 198, 0.65);
+    box-shadow:
+      0 -7px 0 -1px rgba(217, 245, 255, 0.95),
+      -5px -4px 0 -2px rgba(143, 214, 238, 0.9),
+      5px -3px 0 -2px rgba(143, 214, 238, 0.9),
+      -7px 1px 0 -2px rgba(143, 176, 198, 0.72),
+      7px 2px 0 -2px rgba(143, 176, 198, 0.72);
   }
   45% {
-    opacity: 0.9;
-    transform: translate(-50%, -50%) scale(1.55);
-    box-shadow: 0 0 0 4px rgba(143, 176, 198, 0.34);
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(1.7);
+    box-shadow:
+      0 -13px 0 -1px rgba(217, 245, 255, 0.76),
+      -9px -8px 0 -2px rgba(143, 214, 238, 0.65),
+      9px -7px 0 -2px rgba(143, 214, 238, 0.65),
+      -12px 1px 0 -2px rgba(143, 176, 198, 0.45),
+      12px 3px 0 -2px rgba(143, 176, 198, 0.45);
   }
   100% {
     opacity: 1;
@@ -1094,11 +1138,11 @@ body::after {
 @keyframes impact-ring {
   from {
     opacity: 1;
-    transform: scale(0.3);
+    transform: scale(0.2);
   }
   to {
     opacity: 0;
-    transform: scale(1.5);
+    transform: scale(1.7);
   }
 }
 
@@ -1109,7 +1153,7 @@ body::after {
   }
   45% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.45);
+    transform: translate(-50%, -50%) scale(1.7);
   }
   100% {
     opacity: 0;
@@ -1124,7 +1168,7 @@ body::after {
   }
   45% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.7);
+    transform: translate(-50%, -50%) scale(2);
   }
   100% {
     opacity: 0;
@@ -1186,9 +1230,11 @@ body::after {
     box-shadow: none;
   }
   45% {
-    filter: brightness(1.5) contrast(1.08);
-    transform: scale(1.16);
-    box-shadow: 0 0 18px rgba(255, 108, 48, 0.9);
+    filter: brightness(1.7) contrast(1.12);
+    transform: scale(1.2);
+    box-shadow:
+      0 0 10px rgba(255, 179, 92, 0.95),
+      0 0 24px rgba(255, 88, 38, 0.92);
   }
   100% {
     filter: brightness(1);
@@ -1206,9 +1252,11 @@ body::after {
 
 @keyframes sunk-pulse {
   50% {
-    filter: brightness(1.4);
-    transform: scale(1.18);
-    box-shadow: 0 0 20px #f06a6a;
+    filter: brightness(1.55) contrast(1.12);
+    transform: scale(1.2);
+    box-shadow:
+      0 0 12px #ffad5c,
+      0 0 28px rgba(240, 106, 106, 0.95);
   }
 }
 

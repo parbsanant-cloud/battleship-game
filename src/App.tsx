@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
+import { createCombatAudioController, type CombatAudioController } from './audio.ts'
 import Board from './components/Board.tsx'
 import BattleLog from './components/BattleLog.tsx'
 import FleetStatus from './components/FleetStatus.tsx'
@@ -30,22 +31,88 @@ function ignoresShortcut(target: EventTarget | null): boolean {
   return ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)
 }
 
+const SOUND_MUTED_KEY = 'battleship-sound-muted'
+
+function readSoundMuted(): boolean {
+  try {
+    return window.localStorage.getItem(SOUND_MUTED_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
 export default function App() {
   const [state, dispatch] = useReducer(gameReducer, 'normal', createInitialState)
   const [hover, setHover] = useState<Coord | null>(null)
   const [launched, setLaunched] = useState(false)
   const [exiting, setExiting] = useState(false)
+  const [soundMuted, setSoundMuted] = useState(readSoundMuted)
   const [sunkFeedback, setSunkFeedback] = useState<{
     shipId: ShipId
     fleet: 'player' | 'ai'
   } | null>(null)
   const launchTimer = useRef<number | null>(null)
   const sunkFeedbackTimer = useRef<number | null>(null)
+  const audioRef = useRef<CombatAudioController | null>(null)
+  const lastAnimationRef = useRef<string | null>(null)
+  const announcedWinnerRef = useRef<GameState['winner']>(null)
   const stateRef = useRef<GameState>(state)
   stateRef.current = state
 
   const { phase, playerBoard, playerFleet, selectedShipId, orientation, animating } = state
   const placing = phase === 'placement'
+
+  useEffect(() => {
+    const audio = createCombatAudioController(readSoundMuted())
+    audioRef.current = audio
+    return () => {
+      audio.dispose()
+      audioRef.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    audioRef.current?.setMuted(soundMuted)
+    try {
+      window.localStorage.setItem(SOUND_MUTED_KEY, String(soundMuted))
+    } catch {
+      // Audio preference remains session-local when storage is unavailable.
+    }
+  }, [soundMuted])
+
+  useEffect(() => {
+    if (animating === null) {
+      lastAnimationRef.current = null
+      return
+    }
+
+    const animationKey = `${animating.kind}:${animating.index}`
+    if (lastAnimationRef.current === animationKey) return
+    lastAnimationRef.current = animationKey
+
+    if (animating.kind === 'miss') {
+      audioRef.current?.play('miss')
+    } else if (animating.kind === 'hit') {
+      audioRef.current?.play('hit-impact')
+      audioRef.current?.play('hit-explosion')
+    } else {
+      audioRef.current?.play('sunk')
+    }
+  }, [animating])
+
+  useEffect(() => {
+    if (phase !== 'gameOver' || state.winner === null) {
+      if (phase !== 'gameOver') announcedWinnerRef.current = null
+      return
+    }
+    if (announcedWinnerRef.current === state.winner) return
+    announcedWinnerRef.current = state.winner
+    audioRef.current?.play(state.winner === 'player' ? 'victory' : 'defeat')
+  }, [phase, state.winner])
+
+  const toggleSound = useCallback(() => {
+    setSoundMuted((muted) => !muted)
+  }, [])
 
   useEffect(() => {
     if (!placing) return
@@ -158,7 +225,16 @@ export default function App() {
 
   if (!launched) {
     return (
-      <div className="app">
+      <div className="app app--landing">
+        <button
+          type="button"
+          className="audio-toggle audio-toggle--landing"
+          aria-label={soundMuted ? 'Turn sound on' : 'Mute sound'}
+          aria-pressed={!soundMuted}
+          onClick={toggleSound}
+        >
+          {soundMuted ? 'Sound off' : 'Sound on'}
+        </button>
         <Landing
           difficulty={state.difficulty}
           exiting={exiting}
@@ -172,8 +248,19 @@ export default function App() {
   return (
     <div className="app">
       <header className="app__header">
-        <h1 className="app__title">Battleship</h1>
-        <p className="app__tagline">Position your fleet, then take on the AI.</p>
+        <div>
+          <h1 className="app__title">Battleship</h1>
+          <p className="app__tagline">Position your fleet, then take on the AI.</p>
+        </div>
+        <button
+          type="button"
+          className="audio-toggle"
+          aria-label={soundMuted ? 'Turn sound on' : 'Mute sound'}
+          aria-pressed={!soundMuted}
+          onClick={toggleSound}
+        >
+          {soundMuted ? 'Sound off' : 'Sound on'}
+        </button>
       </header>
 
       {placing ? (
