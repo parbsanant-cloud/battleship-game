@@ -240,6 +240,7 @@ body::after {
 
 .cell--anim-sunk {
   animation: sunk-pulse 400ms ease-out;
+  z-index: 2;
 }
 
 .cell--anim-sunk::before {
@@ -264,6 +265,54 @@ body::after {
   border-color: #ff9b9b;
   box-shadow: inset 0 0 0 2px rgba(255, 92, 92, 0.7);
   animation: preview-fade 180ms ease-out;
+}
+
+.sunk-silhouette {
+  position: absolute;
+  top: calc(0.75rem + var(--sunk-row) * (var(--cell) + var(--gap)));
+  left: calc(0.75rem + var(--sunk-column) * (var(--cell) + var(--gap)));
+  z-index: 1;
+  display: grid;
+  width: calc(var(--sunk-length) * var(--cell) + (var(--sunk-length) - 1) * var(--gap));
+  height: var(--cell);
+  pointer-events: none;
+}
+
+.sunk-silhouette--vertical {
+  width: var(--cell);
+  height: calc(var(--sunk-length) * var(--cell) + (var(--sunk-length) - 1) * var(--gap));
+}
+
+.sunk-silhouette__svg {
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: rgba(38, 12, 20, 0.9);
+  stroke: #d85b68;
+  stroke-width: 4;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 4px rgba(240, 106, 106, 0.5));
+  pointer-events: none;
+}
+
+.sunk-silhouette--vertical .sunk-silhouette__svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--sunk-length) * var(--cell) + (var(--sunk-length) - 1) * var(--gap));
+  height: var(--cell);
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center;
+}
+
+.sunk-silhouette__detail {
+  fill: rgba(255, 155, 155, 0.72);
+  stroke: #ff9b9b;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 
 /* Landing */

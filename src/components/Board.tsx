@@ -1,6 +1,8 @@
 import { Fragment } from 'react'
 import { BOARD_SIZE, toCoord } from '../game/board.ts'
 import Cell from './Cell.tsx'
+import SunkShipSilhouette from './SunkShipSilhouette.tsx'
+import type { SunkShipOverlay } from './SunkShipSilhouette.tsx'
 import type { Animation, CellState, Coord } from '../game/types.ts'
 
 export type DisplayCellState = CellState | 'revealed'
@@ -24,6 +26,7 @@ interface BoardProps {
   preview: BoardPreview | null
   onSelectCell: (coord: Coord) => void
   onHoverCell: (coord: Coord | null) => void
+  sunkShips?: SunkShipOverlay[]
   animatingIndex?: number | null
   animatingKind?: Animation['kind'] | null
 }
@@ -35,6 +38,7 @@ export default function Board({
   preview,
   onSelectCell,
   onHoverCell,
+  sunkShips = [],
   animatingIndex = null,
   animatingKind = null,
 }: BoardProps) {
@@ -74,6 +78,9 @@ export default function Board({
           </Fragment>
         )
       })}
+      {sunkShips.map((ship) => (
+        <SunkShipSilhouette key={ship.id} ship={ship} />
+      ))}
     </div>
   )
 }

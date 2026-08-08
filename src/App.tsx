@@ -6,6 +6,7 @@ import GameOver from './components/GameOver.tsx'
 import Landing from './components/Landing.tsx'
 import PlacementPanel from './components/PlacementPanel.tsx'
 import StatusBar from './components/StatusBar.tsx'
+import type { SunkShipOverlay } from './components/SunkShipSilhouette.tsx'
 import { FLEET, inBounds, toIndex } from './game/board.ts'
 import { chooseAIShot } from './game/ai.ts'
 import { canPlace, shipCells } from './game/placement.ts'
@@ -15,6 +16,12 @@ import type { CellState, Coord, GameState, ShipId } from './game/types.ts'
 
 function maskBoard(cells: CellState[], revealShips: boolean): DisplayCellState[] {
   return cells.map((cell) => (cell === 'ship' ? (revealShips ? 'revealed' : 'empty') : cell))
+}
+
+function sunkShips(fleet: GameState['playerFleet']): SunkShipOverlay[] {
+  return fleet
+    .filter((ship) => ship.hits === ship.length)
+    .map(({ id, cells }) => ({ id, cells }))
 }
 
 function ignoresShortcut(target: EventTarget | null): boolean {
@@ -178,6 +185,7 @@ export default function App() {
               label="Your waters"
               interactive={placing}
               preview={preview}
+              sunkShips={[]}
               onSelectCell={selectCell}
               onHoverCell={setHover}
             />
@@ -215,6 +223,7 @@ export default function App() {
                 label="Your fleet"
                 interactive={false}
                 preview={null}
+                sunkShips={sunkShips(state.playerFleet)}
                 animatingIndex={animatedPlayerBoard ? animating?.index : null}
                 animatingKind={animatedPlayerBoard ? animating?.kind : null}
                 onSelectCell={() => {}}
@@ -233,6 +242,7 @@ export default function App() {
                 label="Enemy waters"
                 interactive={phase === 'playerTurn' && animating === null}
                 preview={null}
+                sunkShips={sunkShips(state.aiFleet)}
                 animatingIndex={animatedEnemyBoard ? animating?.index : null}
                 animatingKind={animatedEnemyBoard ? animating?.kind : null}
                 onSelectCell={(coord) => dispatch({ type: 'PLAYER_FIRE', coord })}
