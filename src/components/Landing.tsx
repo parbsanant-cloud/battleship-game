@@ -63,7 +63,7 @@ export default function Landing({
         <div className="briefing__audio" aria-label="Audio controls">
           <button
             type="button"
-            className="audio-toggle"
+            className="rail-control"
             aria-label={soundMuted ? 'Turn sound on' : 'Mute sound'}
             aria-pressed={!soundMuted}
             onClick={onToggleSound}
@@ -72,7 +72,7 @@ export default function Landing({
           </button>
           <button
             type="button"
-            className="audio-toggle"
+            className="rail-control"
             aria-label={voiceMuted ? 'Turn voice callouts on' : 'Mute voice callouts'}
             aria-pressed={!voiceMuted}
             onClick={onToggleVoice}
