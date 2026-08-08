@@ -240,6 +240,7 @@ body::after {
 
 .cell--anim-sunk {
   animation: sunk-pulse 400ms ease-out;
+  z-index: 2;
 }
 
 .cell--anim-sunk::before {
@@ -264,6 +265,74 @@ body::after {
   border-color: #ff9b9b;
   box-shadow: inset 0 0 0 2px rgba(255, 92, 92, 0.7);
   animation: preview-fade 180ms ease-out;
+}
+
+.sunk-silhouette {
+  position: absolute;
+  top: calc(0.75rem + var(--sunk-row) * (var(--cell) + var(--gap)));
+  left: calc(0.75rem + var(--sunk-column) * (var(--cell) + var(--gap)));
+  z-index: 1;
+  display: grid;
+  width: calc(var(--sunk-length) * var(--cell) + (var(--sunk-length) - 1) * var(--gap));
+  height: var(--cell);
+  pointer-events: none;
+}
+
+.sunk-silhouette--vertical {
+  width: var(--cell);
+  height: calc(var(--sunk-length) * var(--cell) + (var(--sunk-length) - 1) * var(--gap));
+}
+
+.sunk-silhouette__svg {
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.sunk-silhouette--vertical .sunk-silhouette__svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--sunk-length) * var(--cell) + (var(--sunk-length) - 1) * var(--gap));
+  height: var(--cell);
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center;
+}
+
+.sunk-silhouette__detail {
+  fill: rgba(107, 126, 134, 0.52);
+  stroke: #98a8af;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.sunk-silhouette__hull {
+  fill: rgba(18, 28, 34, 0.98);
+  stroke: #758991;
+  stroke-width: 4;
+  stroke-linejoin: round;
+  filter:
+    drop-shadow(0 0 4px rgba(240, 106, 106, 0.28))
+    drop-shadow(0 0 1px rgba(240, 106, 106, 0.42));
+}
+
+.sunk-silhouette__detail--dark {
+  fill: rgba(16, 27, 34, 0.9);
+  stroke: #465b64;
+}
+
+.sunk-silhouette__detail--scorch {
+  fill: rgba(3, 9, 13, 0.9);
+  stroke: none;
+  filter: blur(1.5px);
+}
+
+.sunk-silhouette__detail--heavy {
+  stroke-width: 5;
 }
 
 /* Landing */
