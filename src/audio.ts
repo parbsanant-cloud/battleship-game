@@ -23,7 +23,7 @@ export type VoiceCue =
   | 'defeat'
 
 const POOL_SIZE = 3
-const VOLUME = 0.4
+const VOLUME = 0.5
 const VOICE_VOLUME = 0.5
 
 const CUE_URLS: Record<CombatCue, string> = {
