@@ -3,17 +3,19 @@ import type { Difficulty } from '../game/types.ts'
 
 interface LandingProps {
   difficulty: Difficulty
+  exiting?: boolean
   onDifficultyChange: (difficulty: Difficulty) => void
   onStartMission: () => void
 }
 
 export default function Landing({
   difficulty,
+  exiting = false,
   onDifficultyChange,
   onStartMission,
 }: LandingProps) {
   return (
-    <main className="landing screen-enter">
+    <main className={`landing screen-enter${exiting ? ' landing--exiting' : ''}`}>
       <div className="landing__card">
         <svg
           className="landing__mark"
@@ -42,6 +44,7 @@ export default function Landing({
         <button
           type="button"
           className="button button--primary landing__start"
+          disabled={exiting}
           onClick={onStartMission}
         >
           Start Mission

@@ -212,7 +212,7 @@ body::after {
 }
 
 .cell--anim-hit {
-  animation: hit-pulse 400ms ease-out;
+  animation: hit-pulse 240ms ease-out;
 }
 
 .cell--anim-hit::before,
@@ -225,8 +225,8 @@ body::after {
 }
 
 .cell--anim-hit::before {
-  border: 2px solid #ffd9a8;
-  animation: impact-ring 380ms ease-out;
+  border: 2px solid #ffb35c;
+  animation: impact-ring 230ms ease-out;
 }
 
 .cell--anim-miss::before {
@@ -357,6 +357,11 @@ body::after {
 
 .screen-enter {
   animation: screen-fade 320ms ease-out;
+}
+
+.landing--exiting {
+  pointer-events: none;
+  animation: landing-exit 300ms ease-in forwards;
 }
 
 /* AI radar sweep */
@@ -577,7 +582,27 @@ body::after {
 }
 
 .battle-screen__board {
+  position: relative;
   min-width: 0;
+}
+
+.sunk-label {
+  position: absolute;
+  top: -0.3rem;
+  left: 50%;
+  z-index: 1;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: #ffd9a8;
+  background: rgba(15, 42, 64, 0.92);
+  border: 1px solid #b85b2d;
+  border-radius: 999px;
+  box-shadow: 0 0 14px rgba(233, 120, 55, 0.35);
+  pointer-events: none;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  animation: sunk-label-fade 1.5s ease-out forwards;
 }
 
 .battle-screen__fleets {
@@ -695,6 +720,10 @@ body::after {
 
 .fleet-status__row--sunk .fleet-status__badge {
   color: #ff8f8f;
+}
+
+.fleet-status__row--highlight {
+  animation: fleet-status-highlight 1.5s ease-out;
 }
 
 .fleet-status__pips {
@@ -897,6 +926,17 @@ body::after {
   }
 }
 
+@keyframes landing-exit {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
 @keyframes radar-sweep {
   from {
     background-position: 120% 0;
@@ -928,6 +968,31 @@ body::after {
   }
 }
 
+@keyframes sunk-label-fade {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 0.25rem);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -0.2rem);
+  }
+}
+
+@keyframes fleet-status-highlight {
+  0%,
+  100% {
+    box-shadow: none;
+  }
+  35% {
+    box-shadow: inset 0 0 0 1px #ffad5c, 0 0 14px rgba(233, 120, 55, 0.42);
+  }
+}
+
 @keyframes fleet-reveal {
   from {
     opacity: 0.25;
@@ -951,10 +1016,20 @@ body::after {
 }
 
 @keyframes hit-pulse {
-  50% {
-    filter: brightness(1.35);
-    transform: scale(1.12);
-    box-shadow: 0 0 16px #ffad5c;
+  0% {
+    filter: brightness(1);
+    transform: scale(1);
+    box-shadow: none;
+  }
+  45% {
+    filter: brightness(1.5) contrast(1.08);
+    transform: scale(1.16);
+    box-shadow: 0 0 18px rgba(255, 108, 48, 0.9);
+  }
+  100% {
+    filter: brightness(1);
+    transform: scale(1);
+    box-shadow: none;
   }
 }
 

@@ -11,7 +11,7 @@ import { chooseAIShot } from './game/ai.ts'
 import { canPlace, shipCells } from './game/placement.ts'
 import { createInitialState, gameReducer } from './game/reducer.ts'
 import type { BoardPreview, DisplayCellState } from './components/Board.tsx'
-import type { CellState, Coord, GameState } from './game/types.ts'
+import type { CellState, Coord, GameState, ShipId } from './game/types.ts'
 
 function maskBoard(cells: CellState[], revealShips: boolean): DisplayCellState[] {
   return cells.map((cell) => (cell === 'ship' ? (revealShips ? 'revealed' : 'empty') : cell))
@@ -27,6 +27,13 @@ export default function App() {
   const [state, dispatch] = useReducer(gameReducer, 'normal', createInitialState)
   const [hover, setHover] = useState<Coord | null>(null)
   const [launched, setLaunched] = useState(false)
+  const [exiting, setExiting] = useState(false)
+  const [sunkFeedback, setSunkFeedback] = useState<{
+    shipId: ShipId
+    fleet: 'player' | 'ai'
+  } | null>(null)
+  const launchTimer = useRef<number | null>(null)
+  const sunkFeedbackTimer = useRef<number | null>(null)
   const stateRef = useRef<GameState>(state)
   stateRef.current = state
 
@@ -90,6 +97,51 @@ export default function App() {
     return () => window.clearTimeout(timer)
   }, [state.toast])
 
+  useEffect(() => {
+    if (phase === 'placement') {
+      setSunkFeedback(null)
+      if (sunkFeedbackTimer.current !== null) {
+        window.clearTimeout(sunkFeedbackTimer.current)
+        sunkFeedbackTimer.current = null
+      }
+      return
+    }
+    if (animating?.kind !== 'sunk') return
+
+    const playerFired = phase === 'playerTurn' || state.winner === 'player'
+    const board = playerFired ? state.aiBoard : state.playerBoard
+    const shipId = board.shipAt[animating.index]
+    if (shipId === null) return
+
+    setSunkFeedback({ shipId, fleet: playerFired ? 'ai' : 'player' })
+    if (sunkFeedbackTimer.current !== null) window.clearTimeout(sunkFeedbackTimer.current)
+    sunkFeedbackTimer.current = window.setTimeout(() => {
+      setSunkFeedback(null)
+      sunkFeedbackTimer.current = null
+    }, 1500)
+  }, [animating?.index, animating?.kind, phase, state.aiBoard, state.playerBoard, state.winner])
+
+  useEffect(() => {
+    return () => {
+      if (launchTimer.current !== null) window.clearTimeout(launchTimer.current)
+      if (sunkFeedbackTimer.current !== null) window.clearTimeout(sunkFeedbackTimer.current)
+    }
+  }, [])
+
+  const startMission = useCallback(() => {
+    if (exiting || launched) return
+    setExiting(true)
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    launchTimer.current = window.setTimeout(
+      () => {
+        setLaunched(true)
+        setExiting(false)
+        launchTimer.current = null
+      },
+      reducedMotion ? 0 : 300,
+    )
+  }, [exiting, launched])
+
   const scanning = phase === 'aiTurn' && animating === null
 
   const animatedPlayerBoard =
@@ -102,8 +154,9 @@ export default function App() {
       <div className="app">
         <Landing
           difficulty={state.difficulty}
+          exiting={exiting}
           onDifficultyChange={(difficulty) => dispatch({ type: 'SET_DIFFICULTY', difficulty })}
-          onStartMission={() => setLaunched(true)}
+          onStartMission={startMission}
         />
       </div>
     )
@@ -152,6 +205,11 @@ export default function App() {
               className={`battle-screen__board${scanning ? ' battle-screen__board--scanning' : ''}`}
             >
               <h2 className="board__title">Your fleet</h2>
+              {sunkFeedback?.fleet === 'player' && (
+                <div className="sunk-label" aria-hidden="true">
+                  {FLEET.find((ship) => ship.id === sunkFeedback.shipId)?.name} Destroyed
+                </div>
+              )}
               <Board
                 cells={playerBoard.cells}
                 label="Your fleet"
@@ -165,6 +223,11 @@ export default function App() {
             </section>
             <section className="battle-screen__board">
               <h2 className="board__title">Enemy waters</h2>
+              {sunkFeedback?.fleet === 'ai' && (
+                <div className="sunk-label" aria-hidden="true">
+                  {FLEET.find((ship) => ship.id === sunkFeedback.shipId)?.name} Destroyed
+                </div>
+              )}
               <Board
                 cells={maskBoard(state.aiBoard.cells, phase === 'gameOver' && state.winner === 'ai')}
                 label="Enemy waters"
@@ -178,8 +241,16 @@ export default function App() {
             </section>
           </div>
           <div className="battle-screen__fleets">
-            <FleetStatus title="Your fleet status" ships={state.playerFleet} />
-            <FleetStatus title="Enemy fleet status" ships={state.aiFleet} />
+            <FleetStatus
+              title="Your fleet status"
+              ships={state.playerFleet}
+              highlightShipId={sunkFeedback?.fleet === 'player' ? sunkFeedback.shipId : null}
+            />
+            <FleetStatus
+              title="Enemy fleet status"
+              ships={state.aiFleet}
+              highlightShipId={sunkFeedback?.fleet === 'ai' ? sunkFeedback.shipId : null}
+            />
           </div>
           <BattleLog entries={state.battleLog} />
           {state.toast !== null && (
