@@ -79,7 +79,14 @@ body::after {
   position: relative;
 }
 
-.audio-toggle--landing {
+.audio-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.45rem;
+}
+
+.audio-controls--landing {
   position: absolute;
   top: 2rem;
   right: 1rem;
