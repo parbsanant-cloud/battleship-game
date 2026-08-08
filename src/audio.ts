@@ -23,16 +23,16 @@ export type VoiceCue =
   | 'defeat'
 
 const POOL_SIZE = 3
-const VOLUME = 0.35
-const VOICE_VOLUME = 0.4
+const VOLUME = 0.4
+const VOICE_VOLUME = 0.5
 
 const CUE_URLS: Record<CombatCue, string> = {
-  miss: '/audio/miss.mp3',
-  'hit-impact': '/audio/hit-impact.mp3',
-  'hit-explosion': '/audio/hit-explosion.mp3',
-  sunk: '/audio/sunk.mp3',
-  victory: '/audio/victory.mp3',
-  defeat: '/audio/defeat.mp3',
+  miss: '/audio/miss.wav',
+  'hit-impact': '/audio/hit-impact.wav',
+  'hit-explosion': '/audio/hit-explosion.wav',
+  sunk: '/audio/sunk.wav',
+  victory: '/audio/victory.wav',
+  defeat: '/audio/defeat.wav',
 }
 
 const VOICE_URLS: Record<VoiceCue, string> = {
