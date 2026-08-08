@@ -274,10 +274,10 @@ body::after {
 .landing__card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
-  width: min(100%, 420px);
-  padding: 2.5rem 1.75rem;
+  align-items: stretch;
+  gap: 1.5rem;
+  width: min(100%, 440px);
+  padding: clamp(1.75rem, 6vw, 2.5rem);
   text-align: center;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -286,21 +286,42 @@ body::after {
 }
 
 .landing__title {
-  margin: 0;
-  font-size: clamp(2.25rem, 8vw, 3.25rem);
-  letter-spacing: 0.16em;
+  /* The negative margin cancels the trailing letter-space so the
+     wide tracking stays optically centred inside the card. */
+  margin: 0 -0.14em 0 0;
+  font-size: clamp(1.6rem, 7vw, 2.35rem);
+  line-height: 1.15;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--accent);
 }
 
 .landing__subtitle {
-  margin: 0;
-  max-width: 30ch;
+  margin: -0.5rem auto 0;
+  max-width: 32ch;
+  font-size: 0.95rem;
   color: var(--text-muted);
+  text-wrap: balance;
+}
+
+/* Floating the legend drops it inside the box instead of straddling
+   the top border, so it lines up with the options below it. */
+
+.landing__difficulty legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.landing__difficulty {
+  padding: 0.75rem;
+  text-align: left;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
 }
 
 .landing__start {
-  width: 100%;
   padding: 0.85rem 1rem;
   font-size: 1rem;
   letter-spacing: 0.06em;

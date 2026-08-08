@@ -22,6 +22,7 @@ export default function Landing({
         <DifficultySelect
           legend="Opponent"
           name="landing-difficulty"
+          className="landing__difficulty"
           difficulty={difficulty}
           onDifficultyChange={onDifficultyChange}
         />

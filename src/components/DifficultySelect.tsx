@@ -9,6 +9,7 @@ interface DifficultySelectProps {
   legend: string
   difficulty: Difficulty
   name: string
+  className?: string
   onDifficultyChange: (difficulty: Difficulty) => void
 }
 
@@ -16,10 +17,11 @@ export default function DifficultySelect({
   legend,
   difficulty,
   name,
+  className,
   onDifficultyChange,
 }: DifficultySelectProps) {
   return (
-    <fieldset className="fieldset">
+    <fieldset className={`fieldset${className ? ` ${className}` : ''}`}>
       <legend className="panel__heading">{legend}</legend>
       {DIFFICULTIES.map((option) => (
         <label key={option.value} className="radio">
