@@ -3,6 +3,7 @@ import Board from './components/Board.tsx'
 import BattleLog from './components/BattleLog.tsx'
 import FleetStatus from './components/FleetStatus.tsx'
 import GameOver from './components/GameOver.tsx'
+import Landing from './components/Landing.tsx'
 import PlacementPanel from './components/PlacementPanel.tsx'
 import StatusBar from './components/StatusBar.tsx'
 import { FLEET, inBounds, toIndex } from './game/board.ts'
@@ -25,6 +26,7 @@ function ignoresShortcut(target: EventTarget | null): boolean {
 export default function App() {
   const [state, dispatch] = useReducer(gameReducer, 'normal', createInitialState)
   const [hover, setHover] = useState<Coord | null>(null)
+  const [launched, setLaunched] = useState(false)
   const stateRef = useRef<GameState>(state)
   stateRef.current = state
 
@@ -88,10 +90,24 @@ export default function App() {
     return () => window.clearTimeout(timer)
   }, [state.toast])
 
+  const scanning = phase === 'aiTurn' && animating === null
+
   const animatedPlayerBoard =
     animating !== null && (phase === 'aiTurn' || state.winner === 'ai')
   const animatedEnemyBoard =
     animating !== null && (phase === 'playerTurn' || state.winner === 'player')
+
+  if (!launched) {
+    return (
+      <div className="app">
+        <Landing
+          difficulty={state.difficulty}
+          onDifficultyChange={(difficulty) => dispatch({ type: 'SET_DIFFICULTY', difficulty })}
+          onStartMission={() => setLaunched(true)}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="app">
@@ -101,7 +117,7 @@ export default function App() {
       </header>
 
       {placing ? (
-        <main className="layout">
+        <main className="layout screen-enter">
           <section className="layout__board">
             <h2 className="board__title">Your waters</h2>
             <Board
@@ -129,10 +145,12 @@ export default function App() {
           />
         </main>
       ) : (
-        <main className="battle-screen">
+        <main className="battle-screen screen-enter">
           <StatusBar phase={phase} message={state.message} winner={state.winner} />
           <div className="battle-screen__boards">
-            <section className="battle-screen__board">
+            <section
+              className={`battle-screen__board${scanning ? ' battle-screen__board--scanning' : ''}`}
+            >
               <h2 className="board__title">Your fleet</h2>
               <Board
                 cells={playerBoard.cells}

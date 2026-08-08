@@ -1,10 +1,6 @@
+import DifficultySelect from './DifficultySelect.tsx'
 import { FLEET } from '../game/board.ts'
 import type { Difficulty, Orientation, Ship, ShipId } from '../game/types.ts'
-
-const DIFFICULTIES: { value: Difficulty; label: string; hint: string }[] = [
-  { value: 'easy', label: 'Easy', hint: 'Fires at random' },
-  { value: 'normal', label: 'Normal', hint: 'Hunts down your ships' },
-]
 
 interface PlacementPanelProps {
   fleet: Ship[]
@@ -79,22 +75,12 @@ export default function PlacementPanel({
       </section>
 
       <section className="panel__section">
-        <fieldset className="fieldset">
-          <legend className="panel__heading">Opponent</legend>
-          {DIFFICULTIES.map((option) => (
-            <label key={option.value} className="radio">
-              <input
-                type="radio"
-                name="difficulty"
-                value={option.value}
-                checked={difficulty === option.value}
-                onChange={() => onDifficultyChange(option.value)}
-              />
-              <span className="radio__label">{option.label}</span>
-              <span className="radio__hint">{option.hint}</span>
-            </label>
-          ))}
-        </fieldset>
+        <DifficultySelect
+          legend="Opponent"
+          name="difficulty"
+          difficulty={difficulty}
+          onDifficultyChange={onDifficultyChange}
+        />
       </section>
 
       <button type="button" className="button button--primary" disabled={!canStart} onClick={onStart}>

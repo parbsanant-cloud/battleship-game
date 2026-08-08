@@ -21,14 +21,19 @@ export default function GameOver({
   const victory = winner === 'player'
 
   return (
+    <>
+      {victory && <Confetti />}
     <section
       className={`panel game-over game-over--${victory ? 'victory' : 'defeat'}`}
       aria-labelledby="game-over-heading"
     >
       <div aria-live="assertive">
-        <h2 id="game-over-heading" className="panel__heading">
-          {victory ? 'Victory' : 'Defeat'}
+        <h2 id="game-over-heading" className="panel__heading game-over__title">
+          {victory ? 'Mission accomplished' : 'Mission failed'}
         </h2>
+        <p className="game-over__verdict">
+          {victory ? 'Enemy fleet destroyed.' : 'Enemy fleet prevailed.'}
+        </p>
       </div>
       <dl className="game-over__stats">
         <div>
@@ -48,6 +53,10 @@ export default function GameOver({
           <dd>{stats.aiShots}</dd>
         </div>
         <div>
+          <dt>Total shots</dt>
+          <dd>{stats.playerShots + stats.aiShots}</dd>
+        </div>
+        <div>
           <dt>Your ships left</dt>
           <dd>{playerShipsRemaining}</dd>
         </div>
@@ -64,6 +73,26 @@ export default function GameOver({
       <button type="button" className="button button--primary" onClick={onPlayAgain}>
         Play Again
       </button>
-    </section>
+      </section>
+    </>
+  )
+}
+
+const CONFETTI_PIECES = Array.from({ length: 16 }, (_, index) => index)
+
+function Confetti() {
+  return (
+    <div className="confetti" aria-hidden="true">
+      {CONFETTI_PIECES.map((piece) => (
+        <span
+          key={piece}
+          className="confetti__piece"
+          style={{
+            left: `${(piece * 100) / CONFETTI_PIECES.length + 2}%`,
+            animationDelay: `${(piece % 5) * 120}ms`,
+          }}
+        />
+      ))}
+    </div>
   )
 }
