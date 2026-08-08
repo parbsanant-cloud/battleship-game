@@ -21,10 +21,10 @@ export default function DifficultySelect({
   onDifficultyChange,
 }: DifficultySelectProps) {
   return (
-    <fieldset className={`fieldset${className ? ` ${className}` : ''}`}>
-      <legend className="panel__heading">{legend}</legend>
+    <fieldset className={`difficulty-select${className ? ` ${className}` : ''}`}>
+      <legend className="tactical-label">{legend}</legend>
       {DIFFICULTIES.map((option) => (
-        <label key={option.value} className="radio">
+        <label key={option.value} className="difficulty-select__option">
           <input
             type="radio"
             name={name}
@@ -32,8 +32,8 @@ export default function DifficultySelect({
             checked={difficulty === option.value}
             onChange={() => onDifficultyChange(option.value)}
           />
-          <span className="radio__label">{option.label}</span>
-          <span className="radio__hint">{option.hint}</span>
+          <span className="difficulty-select__label">{option.label}</span>
+          <span className="difficulty-select__hint">{option.hint}</span>
         </label>
       ))}
     </fieldset>

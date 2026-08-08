@@ -5,13 +5,12 @@ import {
   type VoiceCue,
 } from './audio.ts'
 import Board from './components/Board.tsx'
-import BattleLog from './components/BattleLog.tsx'
-import FleetStatus from './components/FleetStatus.tsx'
+import BoardDock from './components/BoardDock.tsx'
+import CommandRail from './components/CommandRail.tsx'
+import Comms from './components/Comms.tsx'
 import GameOver from './components/GameOver.tsx'
 import Landing from './components/Landing.tsx'
 import PlacementPanel from './components/PlacementPanel.tsx'
-import StatusBar from './components/StatusBar.tsx'
-import type { SunkShipOverlay } from './components/SunkShipSilhouette.tsx'
 import { FLEET, inBounds, toIndex } from './game/board.ts'
 import { chooseAIShot } from './game/ai.ts'
 import { canPlace, shipCells } from './game/placement.ts'
@@ -21,12 +20,6 @@ import type { CellState, Coord, GameState, ShipId } from './game/types.ts'
 
 function maskBoard(cells: CellState[], revealShips: boolean): DisplayCellState[] {
   return cells.map((cell) => (cell === 'ship' ? (revealShips ? 'revealed' : 'empty') : cell))
-}
-
-function sunkShips(fleet: GameState['playerFleet']): SunkShipOverlay[] {
-  return fleet
-    .filter((ship) => ship.hits === ship.length)
-    .map(({ id, cells }) => ({ id, cells }))
 }
 
 function ignoresShortcut(target: EventTarget | null): boolean {
@@ -282,69 +275,40 @@ export default function App() {
   if (!launched) {
     return (
       <div className="app app--landing">
-        <div className="audio-controls audio-controls--landing">
-          <button
-            type="button"
-            className="audio-toggle"
-            aria-label={soundMuted ? 'Turn sound on' : 'Mute sound'}
-            aria-pressed={!soundMuted}
-            onClick={toggleSound}
-          >
-            {soundMuted ? 'Sound off' : 'Sound on'}
-          </button>
-          <button
-            type="button"
-            className="audio-toggle"
-            aria-label={voiceMuted ? 'Turn voice callouts on' : 'Mute voice callouts'}
-            aria-pressed={!voiceMuted}
-            onClick={toggleVoice}
-          >
-            {voiceMuted ? 'Voice off' : 'Voice on'}
-          </button>
-        </div>
         <Landing
           difficulty={state.difficulty}
           exiting={exiting}
+          soundMuted={soundMuted}
+          voiceMuted={voiceMuted}
           onDifficultyChange={(difficulty) => dispatch({ type: 'SET_DIFFICULTY', difficulty })}
           onStartMission={startMission}
+          onToggleSound={toggleSound}
+          onToggleVoice={toggleVoice}
         />
       </div>
     )
   }
 
   return (
-    <div className="app">
-      <header className="app__header">
-        <div>
-          <h1 className="app__title">Battleship</h1>
-          <p className="app__tagline">Position your fleet, then take on the AI.</p>
-        </div>
-        <div className="audio-controls">
-          <button
-            type="button"
-            className="audio-toggle"
-            aria-label={soundMuted ? 'Turn sound on' : 'Mute sound'}
-            aria-pressed={!soundMuted}
-            onClick={toggleSound}
-          >
-            {soundMuted ? 'Sound off' : 'Sound on'}
-          </button>
-          <button
-            type="button"
-            className="audio-toggle"
-            aria-label={voiceMuted ? 'Turn voice callouts on' : 'Mute voice callouts'}
-            aria-pressed={!voiceMuted}
-            onClick={toggleVoice}
-          >
-            {voiceMuted ? 'Voice off' : 'Voice on'}
-          </button>
-        </div>
-      </header>
-
+    <div className="app app--command">
+      <CommandRail
+        phase={phase}
+        winner={state.winner}
+        difficulty={state.difficulty}
+        stats={state.stats}
+        soundMuted={soundMuted}
+        voiceMuted={voiceMuted}
+        onToggleSound={toggleSound}
+        onToggleVoice={toggleVoice}
+      />
       {placing ? (
-        <main className="layout screen-enter">
-          <section className="layout__board">
-            <h2 className="board__title">Your waters</h2>
+        <main className="deployment-screen screen-enter">
+          <section className="deployment-screen__board">
+            <div className="screen-heading">
+              <span className="tactical-label">Deployment grid</span>
+              <h2>Your waters</h2>
+              <p>Assign positions for the task group.</p>
+            </div>
             <Board
               cells={playerBoard.cells}
               label="Your waters"
@@ -355,7 +319,6 @@ export default function App() {
               onHoverCell={setHover}
             />
           </section>
-
           <PlacementPanel
             fleet={playerFleet}
             selectedShipId={selectedShipId}
@@ -371,72 +334,44 @@ export default function App() {
           />
         </main>
       ) : (
-        <main className="battle-screen screen-enter">
-          <StatusBar phase={phase} message={state.message} winner={state.winner} />
-          <div className="battle-screen__boards">
-            <section
-              className={`battle-screen__board${scanning ? ' battle-screen__board--scanning' : ''}`}
-            >
-              <h2 className="board__title">Your fleet</h2>
-              {sunkFeedback?.fleet === 'player' && (
-                <div className="sunk-label" aria-hidden="true">
-                  {FLEET.find((ship) => ship.id === sunkFeedback.shipId)?.name} Destroyed
-                </div>
-              )}
-              <Board
-                cells={playerBoard.cells}
-                label="Your fleet"
-                interactive={false}
-                preview={null}
-                sunkShips={sunkShips(state.playerFleet)}
-                animatingIndex={animatedPlayerBoard ? animating?.index : null}
-                animatingKind={animatedPlayerBoard ? animating?.kind : null}
-                onSelectCell={() => {}}
-                onHoverCell={() => {}}
-              />
-            </section>
-            <section className="battle-screen__board">
-              <h2 className="board__title">Enemy waters</h2>
-              {sunkFeedback?.fleet === 'ai' && (
-                <div className="sunk-label" aria-hidden="true">
-                  {FLEET.find((ship) => ship.id === sunkFeedback.shipId)?.name} Destroyed
-                </div>
-              )}
-              <Board
-                cells={maskBoard(state.aiBoard.cells, phase === 'gameOver' && state.winner === 'ai')}
-                label="Enemy waters"
-                interactive={phase === 'playerTurn' && animating === null}
-                preview={null}
-                sunkShips={sunkShips(state.aiFleet)}
-                animatingIndex={animatedEnemyBoard ? animating?.index : null}
-                animatingKind={animatedEnemyBoard ? animating?.kind : null}
-                onSelectCell={(coord) => dispatch({ type: 'PLAYER_FIRE', coord })}
-                onHoverCell={() => {}}
-              />
-            </section>
-          </div>
-          <div className="battle-screen__fleets">
-            <FleetStatus
-              title="Your fleet status"
-              ships={state.playerFleet}
+        <main className="combat-screen screen-enter">
+          <div className="combat-screen__boards">
+            <BoardDock
+              fleetTitle="Your fleet"
+              boardLabel="Your fleet"
+              cells={playerBoard.cells}
+              fleet={state.playerFleet}
+              interactive={false}
+              preview={null}
+              animatingIndex={animatedPlayerBoard ? animating?.index ?? null : null}
+              animatingKind={animatedPlayerBoard ? animating?.kind ?? null : null}
+              onSelectCell={() => {}}
+              onHoverCell={() => {}}
               highlightShipId={sunkFeedback?.fleet === 'player' ? sunkFeedback.shipId : null}
+              variant="player"
+              scanning={scanning}
             />
-            <FleetStatus
-              title="Enemy fleet status"
-              ships={state.aiFleet}
+            <BoardDock
+              fleetTitle="Enemy waters"
+              boardLabel="Enemy waters"
+              cells={maskBoard(state.aiBoard.cells, phase === 'gameOver' && state.winner === 'ai')}
+              fleet={state.aiFleet}
+              interactive={phase === 'playerTurn' && animating === null}
+              preview={null}
+              animatingIndex={animatedEnemyBoard ? animating?.index ?? null : null}
+              animatingKind={animatedEnemyBoard ? animating?.kind ?? null : null}
+              onSelectCell={(coord) => dispatch({ type: 'PLAYER_FIRE', coord })}
+              onHoverCell={() => {}}
               highlightShipId={sunkFeedback?.fleet === 'ai' ? sunkFeedback.shipId : null}
+              variant="enemy"
             />
           </div>
-          <BattleLog entries={state.battleLog} />
-          {state.toast !== null && (
-            <div className="toast" aria-hidden="true">
-              {state.toast.message}
-            </div>
-          )}
+          <Comms entries={state.battleLog} message={state.message} phase={phase} winner={state.winner} />
           {phase === 'gameOver' && state.winner !== null && (
             <GameOver
               winner={state.winner}
               stats={state.stats}
+              difficulty={state.difficulty}
               playerShipsRemaining={state.playerFleet.filter((ship) => ship.hits < ship.length).length}
               aiShipsRemaining={state.aiFleet.filter((ship) => ship.hits < ship.length).length}
               onPlayAgain={playAgain}
