@@ -160,8 +160,8 @@ export default function App() {
             </section>
           </div>
           <div className="battle-screen__fleets">
-            <FleetStatus title="Your fleet status" ships={state.playerFleet} reveal />
-            <FleetStatus title="Enemy fleet status" ships={state.aiFleet} reveal={false} />
+            <FleetStatus title="Your fleet status" ships={state.playerFleet} />
+            <FleetStatus title="Enemy fleet status" ships={state.aiFleet} />
           </div>
           <BattleLog entries={state.battleLog} />
           {state.toast !== null && (

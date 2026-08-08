@@ -134,6 +134,11 @@ body {
   transform: translateY(-2px);
 }
 
+.cell:not(:disabled).cell--preview-valid:hover,
+.cell:not(:disabled).cell--preview-invalid:hover {
+  transform: none;
+}
+
 .cell--ship {
   background: var(--ship);
   border-color: #8daabe;
