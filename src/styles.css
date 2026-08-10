@@ -123,10 +123,6 @@ input {
   animation: mist-drift 22s ease-in-out infinite alternate;
 }
 
-.world-backdrop::after {
-  background: none;
-}
-
 .world-backdrop__route {
   position: absolute;
   inset: 0;
@@ -199,27 +195,9 @@ input {
   opacity: 0.7;
 }
 
-@keyframes world-water-drift {
-  from {
-    stroke-dashoffset: 0;
-  }
-  to {
-    stroke-dashoffset: 80;
-  }
-}
-
 @keyframes route-drift {
   to {
     stroke-dashoffset: -80;
-  }
-}
-
-@keyframes world-star-shimmer {
-  from {
-    opacity: 0.55;
-  }
-  to {
-    opacity: 0.95;
   }
 }
 
