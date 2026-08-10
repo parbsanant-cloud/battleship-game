@@ -1974,43 +1974,12 @@ input {
   }
 
   .world-backdrop {
-    min-height: 220rem;
+    min-height: 100%;
     overflow: hidden;
   }
 
-  .world-backdrop__cyclops {
-    top: 108rem;
-    left: 2%;
-    width: 9rem;
-    height: 5.25rem;
-  }
-
-  .world-backdrop__sirens {
-    top: 130rem;
-    right: 2%;
-    width: 10rem;
-    height: 6.25rem;
-  }
-
-  .world-backdrop__charybdis {
-    top: 154rem;
-    left: 6%;
-    width: 10rem;
-    height: 10rem;
-  }
-
-  .world-backdrop__scylla {
-    top: 178rem;
-    right: 1%;
-    width: 12rem;
-    height: 8rem;
-  }
-
-  .world-backdrop__ithaca {
-    top: 204rem;
-    left: 12%;
-    width: 14rem;
-    height: 7rem;
+  .world-backdrop__landmark {
+    display: none;
   }
 
   .world-backdrop__storm {
