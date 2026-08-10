@@ -1,107 +1,106 @@
+function Cyclops() {
+  return (
+    <svg viewBox="0 0 260 150" preserveAspectRatio="xMidYMid meet" role="presentation">
+      <path d="M0 126 30 79 75 68 111 25 166 45 204 89 252 109 260 150H0Z" fill="#101b28" />
+      <path d="M93 82Q129 45 165 80q-35 39-72 2Z" fill="#45545b" fillOpacity="0.72" />
+      <ellipse cx="129" cy="79" rx="11" ry="16" fill="#d5bc76" fillOpacity="0.78" />
+      <circle cx="129" cy="79" r="4" fill="#09111b" />
+      <path d="M18 128Q96 112 178 129T258 126" fill="none" stroke="#9daeb0" strokeOpacity="0.45" strokeWidth="3" />
+    </svg>
+  )
+}
+
+function Sirens() {
+  return (
+    <svg viewBox="0 0 240 150" preserveAspectRatio="xMidYMid meet" role="presentation">
+      <path d="M0 125Q43 84 93 101t76-1q40-14 71 27v23H0Z" fill="#101722" />
+      <path d="M91 105q-1-41 16-65 18 27 14 63M139 106q1-43 19-69 15 30 8 67" fill="none" stroke="#b7aa8f" strokeOpacity="0.75" strokeWidth="4" />
+      <circle cx="107" cy="39" r="4" fill="#e4ce8a" fillOpacity="0.82" />
+      <circle cx="158" cy="36" r="4" fill="#e4ce8a" fillOpacity="0.82" />
+      <path d="M22 129q65-20 119 1t86-2" fill="none" stroke="#a4b7b5" strokeOpacity="0.48" strokeWidth="4" />
+    </svg>
+  )
+}
+
+function Scylla() {
+  return (
+    <svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid meet" role="presentation">
+      <path d="M0 183q58-60 116-38t103-12q51-28 81 29v38H0Z" fill="#08111c" />
+      <path d="M69 171Q60 82 101 24q31 65 19 147M128 172Q137 64 184 9q19 74-6 160M191 176q26-87 80-116 3 80-34 125" fill="#0b1824" stroke="#a0a9a1" strokeOpacity="0.48" strokeWidth="6" />
+      <circle cx="101" cy="57" r="6" fill="#d2b36b" fillOpacity="0.68" />
+      <circle cx="184" cy="46" r="6" fill="#d2b36b" fillOpacity="0.68" />
+      <circle cx="263" cy="82" r="6" fill="#d2b36b" fillOpacity="0.68" />
+      <path d="M18 185q92-29 175 0t98-3" fill="none" stroke="#879a9e" strokeOpacity="0.42" strokeWidth="4" />
+    </svg>
+  )
+}
+
+function Charybdis() {
+  return (
+    <svg viewBox="0 0 220 220" preserveAspectRatio="xMidYMid meet" role="presentation">
+      <circle cx="110" cy="110" r="94" fill="#07131f" fillOpacity="0.72" />
+      <path d="M25 110q42-61 94-17t80 16q-47 36-92 14t-82-13Z" fill="none" stroke="#9fb3b2" strokeOpacity="0.62" strokeWidth="7" />
+      <path d="M53 110q30-36 66-8t63 8q-36 26-66 12t-63-12Z" fill="none" stroke="#d2bf87" strokeOpacity="0.5" strokeWidth="5" />
+      <path d="M82 110q18-15 35-2t29 2q-18 14-35 7t-29-7Z" fill="none" stroke="#d9d1b5" strokeOpacity="0.6" strokeWidth="4" />
+    </svg>
+  )
+}
+
+function Ithaca() {
+  return (
+    <svg viewBox="0 0 300 150" preserveAspectRatio="xMidYMid meet" role="presentation">
+      <path d="M0 116q52-52 109-37t91-4q58-25 100 18v57H0Z" fill="#142532" />
+      <path d="M102 90q39-63 78-2l32 24" fill="none" stroke="#9eb2ad" strokeOpacity="0.76" strokeWidth="5" />
+      <path d="M143 71V43m-13 16h26" stroke="#d5bc77" strokeOpacity="0.78" strokeWidth="3" />
+      <circle cx="143" cy="36" r="9" fill="#f2d47e" fillOpacity="0.88" />
+      <path d="M22 128q83-24 159 0t100-4" fill="none" stroke="#c2c7b0" strokeOpacity="0.52" strokeWidth="4" />
+    </svg>
+  )
+}
+
 export default function WorldBackdrop() {
   return (
     <div className="world-backdrop" aria-hidden="true">
       <svg
-        className="world-backdrop__svg"
-        viewBox="0 0 1600 2400"
+        className="world-backdrop__route"
+        viewBox="0 0 100 2400"
         preserveAspectRatio="none"
         role="presentation"
       >
-        <defs>
-          <linearGradient id="world-sea" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#15243a" />
-            <stop offset="0.48" stopColor="#0b1628" />
-            <stop offset="1" stopColor="#180f1e" />
-          </linearGradient>
-          <radialGradient id="world-moonlight" cx="50%" cy="0%" r="75%">
-            <stop offset="0" stopColor="#d8d4bf" stopOpacity="0.18" />
-            <stop offset="0.45" stopColor="#7a8996" stopOpacity="0.05" />
-            <stop offset="1" stopColor="#0a0e1a" stopOpacity="0" />
-          </radialGradient>
-          <linearGradient id="world-route" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#bd9658" stopOpacity="0.1" />
-            <stop offset="0.5" stopColor="#d5b778" stopOpacity="0.45" />
-            <stop offset="1" stopColor="#bd9658" stopOpacity="0.12" />
-          </linearGradient>
-        </defs>
-
-        <rect width="1600" height="2400" fill="url(#world-sea)" />
-        <rect width="1600" height="2400" fill="url(#world-moonlight)" />
-
-        <g className="world-backdrop__waves" fill="none" stroke="#9ca9aa" strokeOpacity="0.12">
-          <path d="M0 170 C180 100 310 250 570 170 S1030 110 1600 190" />
-          <path d="M0 330 C100 250 370 420 690 330 S1250 270 1600 370" />
-          <path d="M0 560 C210 480 380 650 730 560 S1210 490 1600 610" />
-          <path d="M0 790 C120 700 420 860 760 770 S1270 710 1600 820" />
-          <path d="M0 1030 C190 930 430 1110 800 1010 S1260 960 1600 1080" />
-          <path d="M0 1290 C170 1170 430 1370 750 1270 S1260 1220 1600 1350" />
-          <path d="M0 1530 C180 1440 450 1610 810 1500 S1280 1460 1600 1580" />
-          <path d="M0 1780 C130 1670 440 1880 760 1760 S1260 1710 1600 1840" />
-          <path d="M0 2040 C180 1930 450 2130 820 2020 S1300 1970 1600 2100" />
-          <path d="M0 2280 C140 2170 420 2380 760 2260 S1280 2220 1600 2340" />
-        </g>
-
         <path
-          className="world-backdrop__route"
-          d="M220 410 C470 570 300 790 580 930 S1080 1060 1310 1280 S1180 1710 930 1840 S650 2100 1120 2220"
+          d="M9 220C25 420 13 590 31 760S70 990 82 1190s-18 330-42 500 2 370 35 520"
           fill="none"
-          stroke="url(#world-route)"
-          strokeDasharray="3 18"
+          stroke="#d5b778"
+          strokeDasharray="1 3"
           strokeLinecap="round"
+          strokeOpacity="0.42"
+          vectorEffect="non-scaling-stroke"
         />
-
-        <g className="world-backdrop__stars" fill="#e5dfc9">
-          <circle cx="180" cy="230" r="2" />
-          <circle cx="340" cy="150" r="1.5" />
-          <circle cx="650" cy="280" r="1.5" />
-          <circle cx="1020" cy="180" r="2" />
-          <circle cx="1390" cy="320" r="1.5" />
-          <circle cx="1450" cy="740" r="2" />
-          <circle cx="210" cy="1180" r="1.5" />
-          <circle cx="1250" cy="1530" r="1.5" />
-          <circle cx="350" cy="2020" r="2" />
-          <circle cx="1340" cy="2180" r="1.5" />
-        </g>
-
-        <g className="world-backdrop__landmark world-backdrop__cyclops" transform="translate(110 710)">
-          <path d="M0 125 L34 72 86 58 121 18 190 42 232 92 278 111 305 157 0 157Z" fill="#121622" />
-          <path d="M122 77 Q155 48 186 77 Q155 112 122 77Z" fill="#30333a" />
-          <ellipse cx="154" cy="77" rx="10" ry="14" fill="#d2b46d" fillOpacity="0.5" />
-          <circle cx="154" cy="77" r="3" fill="#0b0d14" />
-        </g>
-
-        <g className="world-backdrop__landmark world-backdrop__sirens" transform="translate(1280 980)">
-          <path d="M0 146 Q48 95 110 118 T226 122 L260 166 0 166Z" fill="#121622" />
-          <path d="M98 118 Q97 76 111 52 Q128 78 126 116 M151 120 Q153 80 169 59 Q180 87 174 121" fill="none" stroke="#aaa18f" strokeOpacity="0.5" strokeWidth="4" />
-          <circle cx="111" cy="50" r="3" fill="#d8c994" fillOpacity="0.55" />
-          <circle cx="169" cy="57" r="3" fill="#d8c994" fillOpacity="0.55" />
-        </g>
-
-        <g className="world-backdrop__landmark world-backdrop__scylla" transform="translate(1240 1450)">
-          <path d="M0 208 Q70 142 145 176 T300 150 L340 240 0 240Z" fill="#0a0d16" />
-          <path d="M86 191 Q72 94 111 38 Q142 100 128 184 M153 184 Q161 72 204 19 Q222 105 198 183 M219 188 Q251 98 300 67 Q303 153 268 200" fill="#10121b" stroke="#817776" strokeOpacity="0.23" strokeWidth="6" />
-          <circle cx="111" cy="75" r="5" fill="#b49463" fillOpacity="0.35" />
-          <circle cx="203" cy="57" r="5" fill="#b49463" fillOpacity="0.35" />
-          <circle cx="292" cy="99" r="5" fill="#b49463" fillOpacity="0.35" />
-        </g>
-
-        <g className="world-backdrop__landmark world-backdrop__charybdis" transform="translate(120 1740)">
-          <circle cx="150" cy="150" r="108" fill="#080d17" fillOpacity="0.55" />
-          <path d="M40 152 Q95 76 168 128 T272 145 Q215 186 150 174 T40 152Z" fill="none" stroke="#a6afb0" strokeOpacity="0.26" strokeWidth="6" />
-          <path d="M72 152 Q115 112 159 142 T235 151 Q195 172 151 164 T72 152Z" fill="none" stroke="#c2b78f" strokeOpacity="0.22" strokeWidth="4" />
-          <path d="M112 151 Q140 137 163 149 T192 151" fill="none" stroke="#c2b78f" strokeOpacity="0.24" strokeWidth="3" />
-        </g>
-
-        <g className="world-backdrop__landmark world-backdrop__ithaca" transform="translate(1050 2110)">
-          <path d="M0 165 Q62 100 145 114 T300 105 L360 178 0 178Z" fill="#151a21" />
-          <path d="M112 115 Q153 48 198 104 L229 126" fill="none" stroke="#77878a" strokeOpacity="0.55" strokeWidth="5" />
-          <path d="M170 101 L170 74 M158 85 L182 85" stroke="#bda35d" strokeOpacity="0.5" strokeWidth="3" />
-          <circle cx="169" cy="66" r="8" fill="#e5c978" fillOpacity="0.62" />
-          <path d="M34 192 C130 176 240 198 340 185" fill="none" stroke="#b7b7a1" strokeOpacity="0.24" strokeWidth="3" />
-        </g>
-
-        <path className="world-backdrop__trident" d="M820 420 V300 M780 320 L820 280 860 320 M800 300 V265 M840 300 V265" fill="none" stroke="#d0bd88" strokeOpacity="0.1" strokeWidth="4" />
-        <path className="world-backdrop__lightning" d="M1180 450 L1210 520 1190 520 1220 590" fill="none" stroke="#d7d0b8" strokeOpacity="0.26" strokeWidth="4" />
+      </svg>
+      <div className="world-backdrop__landmark world-backdrop__cyclops">
+        <Cyclops />
+      </div>
+      <div className="world-backdrop__landmark world-backdrop__sirens">
+        <Sirens />
+      </div>
+      <div className="world-backdrop__landmark world-backdrop__scylla">
+        <Scylla />
+      </div>
+      <div className="world-backdrop__landmark world-backdrop__charybdis">
+        <Charybdis />
+      </div>
+      <div className="world-backdrop__landmark world-backdrop__ithaca">
+        <Ithaca />
+      </div>
+      <svg
+        className="world-backdrop__storm"
+        viewBox="0 0 180 160"
+        preserveAspectRatio="xMidYMid meet"
+        role="presentation"
+      >
+        <path d="M20 44q30-28 61-5 38-30 77 8" fill="none" stroke="#7f9ba4" strokeOpacity="0.4" strokeWidth="7" />
+        <path d="M80 50v-31m-16 13L80 16l16 16m-8-14V5m-8 13V5" fill="none" stroke="#d3bf88" strokeOpacity="0.35" strokeWidth="3" />
+        <path d="m116 60 16 28-11 0 14 31" fill="none" stroke="#ded8c2" strokeOpacity="0.68" strokeWidth="3" />
       </svg>
     </div>
   )

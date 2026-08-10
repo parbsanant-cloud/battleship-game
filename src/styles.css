@@ -67,39 +67,7 @@ body {
   margin: 0;
   color: var(--white);
   background:
-    radial-gradient(ellipse at 76% 8%, rgba(238, 226, 184, 0.2), transparent 18%),
-    radial-gradient(ellipse at 18% 38%, rgba(37, 82, 112, 0.36), transparent 38%),
-    radial-gradient(ellipse at 84% 72%, rgba(84, 43, 55, 0.2), transparent 30%),
-    linear-gradient(165deg, #1a2335 0%, #0a1424 48%, #05070d 100%);
-}
-
-body::before,
-body::after {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  content: '';
-  pointer-events: none;
-}
-
-body::before {
-  background:
-    radial-gradient(circle at 12% 18%, rgba(238, 233, 218, 0.62) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 78% 26%, rgba(238, 233, 218, 0.48) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 61% 11%, rgba(215, 184, 115, 0.5) 0 1px, transparent 1.5px),
-    linear-gradient(172deg, transparent 42%, rgba(20, 64, 87, 0.22) 56%, transparent 68%),
-    linear-gradient(180deg, transparent 45%, rgba(12, 28, 46, 0.58));
-  background-size: 13rem 11rem, 19rem 17rem, 23rem 19rem, 100% 100%, auto;
-  animation: mist-drift 18s ease-in-out infinite alternate;
-}
-
-body::after {
-  background:
-    linear-gradient(170deg, transparent 52%, rgba(84, 43, 55, 0.2) 68%, transparent 82%),
-    radial-gradient(ellipse at 46% 74%, rgba(88, 111, 126, 0.12), transparent 35%),
-    radial-gradient(ellipse at center, transparent 35%, rgba(3, 5, 10, 0.72));
-  opacity: 0.96;
-  animation: mist-drift 26s ease-in-out infinite alternate-reverse;
+    linear-gradient(165deg, #173b56 0%, #0d2940 45%, #101b31 72%, #1b1223 100%);
 }
 
 button,
@@ -123,37 +91,119 @@ input {
 
 .world-backdrop {
   position: absolute;
-  inset: 0;
-  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   min-height: 100%;
-  overflow: hidden;
+  z-index: -1;
+  overflow: visible;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(220, 224, 202, 0.22), transparent 22rem),
+    radial-gradient(ellipse at 10% 35%, rgba(50, 131, 145, 0.34), transparent 30rem),
+    radial-gradient(ellipse at 88% 61%, rgba(105, 47, 66, 0.38), transparent 34rem),
+    repeating-linear-gradient(172deg, transparent 0 8rem, rgba(146, 183, 184, 0.08) 8.05rem 8.12rem, transparent 8.2rem 13rem),
+    linear-gradient(180deg, #1c4661 0%, #0c2a43 42%, #101d34 70%, #211325 100%);
   pointer-events: none;
 }
 
-.world-backdrop__svg {
+.world-backdrop::before,
+.world-backdrop::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  pointer-events: none;
+}
+
+.world-backdrop::before {
+  background:
+    radial-gradient(circle at 12% 9%, rgba(238, 233, 218, 0.82) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 76% 16%, rgba(238, 233, 218, 0.65) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 58% 7%, rgba(215, 184, 115, 0.62) 0 1px, transparent 1.8px),
+    repeating-linear-gradient(174deg, transparent 0 11rem, rgba(205, 214, 196, 0.11) 11.05rem 11.12rem, transparent 11.2rem 17rem);
+  background-size: 13rem 11rem, 19rem 17rem, 23rem 19rem, 100% 100%;
+  animation: mist-drift 22s ease-in-out infinite alternate;
+}
+
+.world-backdrop::after {
+  background:
+    radial-gradient(ellipse at 50% 2%, transparent 8%, rgba(205, 214, 196, 0.1) 25%, transparent 47%),
+    linear-gradient(175deg, transparent 15%, rgba(59, 128, 137, 0.14) 39%, transparent 58%),
+    linear-gradient(8deg, transparent 48%, rgba(102, 47, 67, 0.2) 72%, transparent 92%);
+  opacity: 0.9;
+  animation: mist-drift 31s ease-in-out infinite alternate-reverse;
+}
+
+.world-backdrop__route {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
-  min-height: 100vh;
-  opacity: 0.72;
+  opacity: 0.8;
 }
 
-.world-backdrop__waves {
-  animation: world-water-drift 36s ease-in-out infinite alternate;
+.world-backdrop__route path {
+  stroke-dasharray: 1 3;
+  animation: route-drift 45s linear infinite;
 }
 
-.world-backdrop__waves path {
-  stroke-dasharray: 4 18;
+.world-backdrop__landmark,
+.world-backdrop__storm {
+  position: absolute;
+  z-index: 1;
+  opacity: 0.78;
 }
 
-.world-backdrop__stars {
-  animation: world-star-shimmer 9s ease-in-out infinite alternate;
+.world-backdrop__landmark svg,
+.world-backdrop__storm {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.world-backdrop__cyclops {
+  top: 20rem;
+  left: -8.25rem;
+  width: 9rem;
+  height: 7rem;
+}
+
+.world-backdrop__sirens {
+  top: 52rem;
+  right: -8.25rem;
+  width: 9.5rem;
+  height: 8rem;
+}
+
+.world-backdrop__scylla {
+  top: 96rem;
+  right: 1vw;
+  width: 16rem;
+  height: 11rem;
 }
 
 .world-backdrop__charybdis {
-  transform-box: fill-box;
-  transform-origin: center;
+  top: 132rem;
+  left: -8rem;
+  width: 11rem;
+  height: 12rem;
   animation: world-whirlpool 42s linear infinite;
+}
+
+.world-backdrop__ithaca {
+  top: 174rem;
+  left: -8rem;
+  width: 15rem;
+  height: 9rem;
+}
+
+.world-backdrop__storm {
+  top: 8rem;
+  right: -8rem;
+  width: 8rem;
+  height: 8rem;
+  opacity: 0.7;
 }
 
 @keyframes world-water-drift {
@@ -162,6 +212,12 @@ input {
   }
   to {
     stroke-dashoffset: 80;
+  }
+}
+
+@keyframes route-drift {
+  to {
+    stroke-dashoffset: -80;
   }
 }
 
@@ -175,6 +231,10 @@ input {
 }
 
 @keyframes world-whirlpool {
+  from {
+    transform: rotate(0deg);
+  }
+
   to {
     transform: rotate(360deg);
   }
@@ -1666,6 +1726,14 @@ input {
   }
 }
 
+@media (max-width: 1320px) {
+  .world-backdrop {
+    left: 0;
+    width: 100%;
+    transform: none;
+  }
+}
+
 @media (max-width: 860px) {
   .deployment-screen,
   .combat-screen {
@@ -1913,12 +1981,59 @@ input {
     white-space: normal;
   }
 
-  .world-backdrop__svg {
-    min-height: 150vh;
+  .world-backdrop {
+    min-height: 235rem;
+    overflow: hidden;
+  }
+
+  .world-backdrop__cyclops {
+    top: 120rem;
+    left: 2%;
+    width: 9rem;
+    height: 5.25rem;
+  }
+
+  .world-backdrop__sirens {
+    top: 145rem;
+    right: 2%;
+    width: 10rem;
+    height: 6.25rem;
+  }
+
+  .world-backdrop__charybdis {
+    top: 170rem;
+    left: 6%;
+    width: 10rem;
+    height: 10rem;
+  }
+
+  .world-backdrop__scylla {
+    top: 195rem;
+    right: 1%;
+    width: 12rem;
+    height: 8rem;
+  }
+
+  .world-backdrop__ithaca {
+    top: 220rem;
+    left: 12%;
+    width: 14rem;
+    height: 7rem;
+  }
+
+  .world-backdrop__storm {
+    top: 11rem;
+    right: 4%;
+    width: 7rem;
+    height: 6rem;
   }
 
   .world-backdrop__landmark {
-    opacity: 0.78;
+    opacity: 0.82;
+  }
+
+  .board-dock__code {
+    margin-inline-end: var(--space-1);
   }
 }
 
