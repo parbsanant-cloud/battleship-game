@@ -773,31 +773,31 @@ input {
 
 .cell--ship {
   background:
-    linear-gradient(145deg, #795033, #332326),
-    repeating-linear-gradient(175deg, rgba(236, 199, 124, 0.14) 0 1px, transparent 1px 5px);
-  border-color: rgba(215, 174, 99, 0.86);
+    linear-gradient(145deg, #4d403a, #20252b),
+    repeating-linear-gradient(175deg, rgba(196, 170, 116, 0.09) 0 1px, transparent 1px 5px);
+  border-color: rgba(191, 158, 94, 0.76);
   box-shadow:
-    inset 0 0 0 1px rgba(245, 211, 143, 0.24),
+    inset 0 0 0 1px rgba(216, 187, 127, 0.16),
     inset 0 -2px 0 rgba(3, 5, 10, 0.5);
 }
 
 .cell--revealed {
   background:
-    linear-gradient(145deg, #674832, #2b2227),
-    repeating-linear-gradient(175deg, rgba(225, 190, 116, 0.11) 0 1px, transparent 1px 5px);
-  border-color: rgba(198, 158, 93, 0.76);
+    linear-gradient(145deg, #403938, #1b2027),
+    repeating-linear-gradient(175deg, rgba(190, 165, 111, 0.07) 0 1px, transparent 1px 5px);
+  border-color: rgba(176, 145, 88, 0.68);
   box-shadow:
-    inset 0 0 0 1px rgba(239, 204, 133, 0.2),
+    inset 0 0 0 1px rgba(211, 181, 120, 0.12),
     inset 0 -2px 0 rgba(3, 5, 10, 0.52);
 }
 
 .cell--hit {
   background:
-    linear-gradient(145deg, #a15035, #632a2c),
-    repeating-linear-gradient(155deg, rgba(255, 200, 118, 0.2) 0 1px, transparent 1px 6px);
-  border-color: #d2975d;
+    linear-gradient(145deg, #71352e, #2a1b23),
+    repeating-linear-gradient(155deg, rgba(220, 120, 70, 0.2) 0 1px, transparent 1px 6px);
+  border-color: #be704b;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 195, 108, 0.46),
+    inset 0 0 0 1px rgba(226, 128, 70, 0.38),
     inset 0 -2px 0 rgba(25, 10, 12, 0.52);
 }
 
@@ -820,11 +820,14 @@ input {
 }
 
 .cell--sunk {
-  background: rgba(52, 25, 35, 0.78);
-  border-color: rgba(130, 76, 80, 0.46);
+  background:
+    radial-gradient(circle at 34% 44%, rgba(220, 213, 181, 0.14) 0 8%, transparent 30%),
+    radial-gradient(circle at 72% 62%, rgba(138, 91, 62, 0.12) 0 7%, transparent 28%),
+    rgba(18, 25, 35, 0.42);
+  border-color: rgba(190, 185, 157, 0.38);
   box-shadow:
-    inset 0 0 0 1px rgba(99, 53, 59, 0.64),
-    inset 0 -2px 0 rgba(18, 7, 12, 0.58);
+    inset 0 0 0 1px rgba(211, 205, 175, 0.1),
+    inset 0 -2px 0 rgba(5, 10, 16, 0.46);
 }
 
 .cell--preview-valid {
