@@ -2004,11 +2004,12 @@ input {
   }
 
   .app--command .world-backdrop__charybdis {
-    top: 110rem;
+    top: calc(100% - 1.5rem);
     right: 1rem;
     left: auto;
-    width: 7rem;
-    height: 6rem;
+    width: 5rem;
+    height: 1.5rem;
+    animation: none;
   }
 
   .world-backdrop__storm {
