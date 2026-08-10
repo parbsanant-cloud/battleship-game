@@ -52,7 +52,13 @@
   --board-pad: 0.75rem;
   color-scheme: dark;
   color: var(--white);
-  background: var(--ink-950);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(220, 224, 202, 0.22), transparent 22rem),
+    radial-gradient(ellipse at 10% 35%, rgba(50, 131, 145, 0.34), transparent 30rem),
+    radial-gradient(ellipse at 88% 61%, rgba(105, 47, 66, 0.38), transparent 34rem),
+    repeating-linear-gradient(172deg, transparent 0 8rem, rgba(146, 183, 184, 0.08) 8.05rem 8.12rem, transparent 8.2rem 13rem),
+    linear-gradient(180deg, #20516b 0%, #12415a 42%, #173d55 70%, #1d4058 100%);
+  background-attachment: fixed;
   font-family: var(--font-sans);
   line-height: 1.5;
 }
@@ -62,44 +68,11 @@
 }
 
 body {
-  min-width: 320px;
+  min-width: 0;
   min-height: 100vh;
   margin: 0;
   color: var(--white);
-  background:
-    radial-gradient(ellipse at 76% 8%, rgba(238, 226, 184, 0.2), transparent 18%),
-    radial-gradient(ellipse at 18% 38%, rgba(37, 82, 112, 0.36), transparent 38%),
-    radial-gradient(ellipse at 84% 72%, rgba(84, 43, 55, 0.2), transparent 30%),
-    linear-gradient(165deg, #1a2335 0%, #0a1424 48%, #05070d 100%);
-}
-
-body::before,
-body::after {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  content: '';
-  pointer-events: none;
-}
-
-body::before {
-  background:
-    radial-gradient(circle at 12% 18%, rgba(238, 233, 218, 0.62) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 78% 26%, rgba(238, 233, 218, 0.48) 0 1px, transparent 1.5px),
-    radial-gradient(circle at 61% 11%, rgba(215, 184, 115, 0.5) 0 1px, transparent 1.5px),
-    linear-gradient(172deg, transparent 42%, rgba(20, 64, 87, 0.22) 56%, transparent 68%),
-    linear-gradient(180deg, transparent 45%, rgba(12, 28, 46, 0.58));
-  background-size: 13rem 11rem, 19rem 17rem, 23rem 19rem, 100% 100%, auto;
-  animation: mist-drift 18s ease-in-out infinite alternate;
-}
-
-body::after {
-  background:
-    linear-gradient(170deg, transparent 52%, rgba(84, 43, 55, 0.2) 68%, transparent 82%),
-    radial-gradient(ellipse at 46% 74%, rgba(88, 111, 126, 0.12), transparent 35%),
-    radial-gradient(ellipse at center, transparent 35%, rgba(3, 5, 10, 0.72));
-  opacity: 0.96;
-  animation: mist-drift 26s ease-in-out infinite alternate-reverse;
+  background: transparent;
 }
 
 button,
@@ -113,10 +86,129 @@ input {
 }
 
 .app {
+  position: relative;
+  isolation: isolate;
   width: min(100%, 1320px);
   min-height: 100vh;
   margin: 0 auto;
   padding: var(--space-6) var(--space-5) var(--space-7);
+}
+
+.world-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  z-index: -1;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.world-backdrop::before,
+.world-backdrop::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  pointer-events: none;
+}
+
+.world-backdrop::before {
+  background:
+    radial-gradient(circle at 12% 9%, rgba(238, 233, 218, 0.82) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 76% 16%, rgba(238, 233, 218, 0.65) 0 1px, transparent 1.8px),
+    radial-gradient(circle at 58% 7%, rgba(215, 184, 115, 0.62) 0 1px, transparent 1.8px);
+  background-size: 13rem 11rem, 19rem 17rem, 23rem 19rem;
+  animation: mist-drift 22s ease-in-out infinite alternate;
+}
+
+.world-backdrop__route {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+
+.world-backdrop__route path {
+  stroke-dasharray: 1 3;
+  animation: route-drift 45s linear infinite;
+}
+
+.world-backdrop__landmark,
+.world-backdrop__storm {
+  position: absolute;
+  z-index: 1;
+  opacity: 0.78;
+}
+
+.world-backdrop__landmark svg,
+.world-backdrop__storm {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.world-backdrop__cyclops {
+  top: 20rem;
+  left: -8.25rem;
+  width: 9rem;
+  height: 7rem;
+}
+
+.world-backdrop__sirens {
+  top: 52rem;
+  right: -8.25rem;
+  width: 9.5rem;
+  height: 8rem;
+}
+
+.world-backdrop__scylla {
+  top: 96rem;
+  right: 1vw;
+  width: 16rem;
+  height: 11rem;
+}
+
+.world-backdrop__charybdis {
+  top: 132rem;
+  left: -8rem;
+  width: 11rem;
+  height: 12rem;
+  animation: world-whirlpool 42s linear infinite;
+}
+
+.world-backdrop__ithaca {
+  top: 174rem;
+  left: -8rem;
+  width: 15rem;
+  height: 9rem;
+}
+
+.world-backdrop__storm {
+  top: 8rem;
+  right: -8rem;
+  width: 8rem;
+  height: 8rem;
+  opacity: 0.7;
+}
+
+@keyframes route-drift {
+  to {
+    stroke-dashoffset: -80;
+  }
+}
+
+@keyframes world-whirlpool {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .tactical-label,
@@ -1605,6 +1697,14 @@ input {
   }
 }
 
+@media (max-width: 1320px) {
+  .world-backdrop {
+    left: 0;
+    width: 100%;
+    transform: none;
+  }
+}
+
 @media (max-width: 860px) {
   .deployment-screen,
   .combat-screen {
@@ -1704,6 +1804,223 @@ input {
   .deployment-panel,
   .game-over {
     padding: var(--space-4);
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --cell: clamp(20px, calc((100vw - 86px) / 11), 30px);
+    --gap: 2px;
+    --board-pad: clamp(0.5rem, 2vw, 0.75rem);
+  }
+
+  .app {
+    padding: var(--space-3) var(--space-3) var(--space-5);
+  }
+
+  .command-rail {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'identity'
+      'readouts'
+      'controls';
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    padding: var(--space-3);
+  }
+
+  .command-rail__identity {
+    grid-area: identity;
+  }
+
+  .command-rail__title {
+    font-size: clamp(1.25rem, 7vw, 1.7rem);
+  }
+
+  .command-rail__strip {
+    display: none;
+  }
+
+  .command-rail__readouts {
+    grid-area: readouts;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--space-1);
+    width: 100%;
+  }
+
+  .readout {
+    padding-inline: var(--space-2);
+  }
+
+  .readout:nth-child(1),
+  .readout:nth-child(2) {
+    grid-column: span 3;
+  }
+
+  .readout:nth-child(3),
+  .readout:nth-child(4),
+  .readout:nth-child(5) {
+    grid-column: span 2;
+  }
+
+  .readout strong {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .command-rail__controls,
+  .command-rail__controls--mission {
+    display: grid;
+    grid-area: controls;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: stretch;
+    width: 100%;
+  }
+
+  .rail-control {
+    min-width: 0;
+    padding: var(--space-2);
+    white-space: nowrap;
+  }
+
+  .deployment-screen,
+  .combat-screen {
+    gap: var(--space-4);
+  }
+
+  .combat-screen {
+    min-height: auto;
+  }
+
+  .combat-screen__heading {
+    padding-inline: 0;
+  }
+
+  .screen-heading h2 {
+    font-size: clamp(1.15rem, 6vw, 1.7rem);
+  }
+
+  .screen-heading p {
+    font-size: clamp(0.72rem, 2.8vw, var(--text-sm));
+  }
+
+  .combat-screen__boards {
+    gap: var(--space-4);
+  }
+
+  .board-dock {
+    gap: var(--space-3);
+    padding: var(--space-2);
+  }
+
+  .board-dock__header {
+    gap: var(--space-2);
+  }
+
+  .board-dock__title {
+    font-size: clamp(1.05rem, 5vw, 1.45rem);
+  }
+
+  .board-dock__code {
+    font-size: clamp(0.56rem, 2vw, var(--text-xs));
+  }
+
+  .board {
+    max-width: 100%;
+  }
+
+  .board__label {
+    font-size: clamp(0.52rem, 2vw, var(--text-xs));
+  }
+
+  .fleet-status {
+    padding: var(--space-2);
+  }
+
+  .fleet-status__header {
+    margin-bottom: var(--space-2);
+  }
+
+  .comms {
+    gap: var(--space-3);
+    padding: var(--space-3);
+  }
+
+  .comms__title {
+    font-size: clamp(0.95rem, 5vw, 1.3rem);
+    white-space: normal;
+  }
+
+  .world-backdrop {
+    min-height: 100%;
+    overflow: hidden;
+  }
+
+  .world-backdrop__landmark {
+    display: none;
+  }
+
+  .app--landing .world-backdrop__cyclops,
+  .app--command .world-backdrop__cyclops,
+  .app--command .world-backdrop__charybdis {
+    display: block;
+  }
+
+  .app--landing .world-backdrop__cyclops {
+    top: 8rem;
+    left: -2rem;
+    width: 10rem;
+    height: 6rem;
+  }
+
+  .app--command .world-backdrop__cyclops {
+    top: 19rem;
+    left: -4rem;
+    width: 8rem;
+    height: 2rem;
+  }
+
+  .app--command .world-backdrop__charybdis {
+    top: calc(100% - 1.5rem);
+    right: 1rem;
+    left: auto;
+    width: 5rem;
+    height: 1.5rem;
+    animation: none;
+  }
+
+  .world-backdrop__storm {
+    top: 11rem;
+    right: 4%;
+    width: 7rem;
+    height: 6rem;
+  }
+
+  .world-backdrop__landmark {
+    opacity: 0.82;
+  }
+
+  .board-dock__code {
+    margin-inline-end: var(--space-1);
+  }
+}
+
+@media (max-width: 420px) {
+  .command-rail__readouts {
+    gap: 0;
+  }
+
+  .readout {
+    padding-inline: var(--space-1);
+  }
+
+  .readout strong {
+    font-size: var(--text-xs);
+  }
+
+  .deployment-screen__board {
+    padding: var(--space-2);
   }
 }
 
