@@ -52,7 +52,12 @@
   --board-pad: 0.75rem;
   color-scheme: dark;
   color: var(--white);
-  background: var(--ink-950);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(220, 224, 202, 0.22), transparent 22rem),
+    radial-gradient(ellipse at 10% 35%, rgba(50, 131, 145, 0.34), transparent 30rem),
+    radial-gradient(ellipse at 88% 61%, rgba(105, 47, 66, 0.38), transparent 34rem),
+    repeating-linear-gradient(172deg, transparent 0 8rem, rgba(146, 183, 184, 0.08) 8.05rem 8.12rem, transparent 8.2rem 13rem),
+    linear-gradient(180deg, #1c4661 0%, #0c2a43 42%, #112a40 70%, #172a3e 100%);
   font-family: var(--font-sans);
   line-height: 1.5;
 }
@@ -66,12 +71,7 @@ body {
   min-height: 100vh;
   margin: 0;
   color: var(--white);
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(220, 224, 202, 0.22), transparent 22rem),
-    radial-gradient(ellipse at 10% 35%, rgba(50, 131, 145, 0.34), transparent 30rem),
-    radial-gradient(ellipse at 88% 61%, rgba(105, 47, 66, 0.38), transparent 34rem),
-    repeating-linear-gradient(172deg, transparent 0 8rem, rgba(146, 183, 184, 0.08) 8.05rem 8.12rem, transparent 8.2rem 13rem),
-    linear-gradient(180deg, #1c4661 0%, #0c2a43 42%, #112a40 70%, #172a3e 100%);
+  background: transparent;
 }
 
 button,
