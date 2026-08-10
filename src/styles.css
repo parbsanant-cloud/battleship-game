@@ -62,7 +62,7 @@
 }
 
 body {
-  min-width: 320px;
+  min-width: 0;
   min-height: 100vh;
   margin: 0;
   color: var(--white);
@@ -113,10 +113,71 @@ input {
 }
 
 .app {
+  position: relative;
+  isolation: isolate;
   width: min(100%, 1320px);
   min-height: 100vh;
   margin: 0 auto;
   padding: var(--space-6) var(--space-5) var(--space-7);
+}
+
+.world-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  min-height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.world-backdrop__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  opacity: 0.72;
+}
+
+.world-backdrop__waves {
+  animation: world-water-drift 36s ease-in-out infinite alternate;
+}
+
+.world-backdrop__waves path {
+  stroke-dasharray: 4 18;
+}
+
+.world-backdrop__stars {
+  animation: world-star-shimmer 9s ease-in-out infinite alternate;
+}
+
+.world-backdrop__charybdis {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: world-whirlpool 42s linear infinite;
+}
+
+@keyframes world-water-drift {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 80;
+  }
+}
+
+@keyframes world-star-shimmer {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 0.95;
+  }
+}
+
+@keyframes world-whirlpool {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .tactical-label,
@@ -1704,6 +1765,178 @@ input {
   .deployment-panel,
   .game-over {
     padding: var(--space-4);
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --cell: clamp(20px, calc((100vw - 86px) / 11), 30px);
+    --gap: 2px;
+    --board-pad: clamp(0.5rem, 2vw, 0.75rem);
+  }
+
+  .app {
+    padding: var(--space-3) var(--space-3) var(--space-5);
+  }
+
+  .command-rail {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'identity'
+      'readouts'
+      'controls';
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    padding: var(--space-3);
+  }
+
+  .command-rail__identity {
+    grid-area: identity;
+  }
+
+  .command-rail__title {
+    font-size: clamp(1.25rem, 7vw, 1.7rem);
+  }
+
+  .command-rail__strip {
+    display: none;
+  }
+
+  .command-rail__readouts {
+    grid-area: readouts;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--space-1);
+    width: 100%;
+  }
+
+  .readout {
+    padding-inline: var(--space-2);
+  }
+
+  .readout:nth-child(1),
+  .readout:nth-child(2) {
+    grid-column: span 3;
+  }
+
+  .readout:nth-child(3),
+  .readout:nth-child(4),
+  .readout:nth-child(5) {
+    grid-column: span 2;
+  }
+
+  .readout strong {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .command-rail__controls,
+  .command-rail__controls--mission {
+    display: grid;
+    grid-area: controls;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: stretch;
+    width: 100%;
+  }
+
+  .rail-control {
+    min-width: 0;
+    padding: var(--space-2);
+    white-space: nowrap;
+  }
+
+  .deployment-screen,
+  .combat-screen {
+    gap: var(--space-4);
+  }
+
+  .combat-screen {
+    min-height: auto;
+  }
+
+  .combat-screen__heading {
+    padding-inline: 0;
+  }
+
+  .screen-heading h2 {
+    font-size: clamp(1.15rem, 6vw, 1.7rem);
+  }
+
+  .screen-heading p {
+    font-size: clamp(0.72rem, 2.8vw, var(--text-sm));
+  }
+
+  .combat-screen__boards {
+    gap: var(--space-4);
+  }
+
+  .board-dock {
+    gap: var(--space-3);
+    padding: var(--space-2);
+  }
+
+  .board-dock__header {
+    gap: var(--space-2);
+  }
+
+  .board-dock__title {
+    font-size: clamp(1.05rem, 5vw, 1.45rem);
+  }
+
+  .board-dock__code {
+    font-size: clamp(0.56rem, 2vw, var(--text-xs));
+  }
+
+  .board {
+    max-width: 100%;
+  }
+
+  .board__label {
+    font-size: clamp(0.52rem, 2vw, var(--text-xs));
+  }
+
+  .fleet-status {
+    padding: var(--space-2);
+  }
+
+  .fleet-status__header {
+    margin-bottom: var(--space-2);
+  }
+
+  .comms {
+    gap: var(--space-3);
+    padding: var(--space-3);
+  }
+
+  .comms__title {
+    font-size: clamp(0.95rem, 5vw, 1.3rem);
+    white-space: normal;
+  }
+
+  .world-backdrop__svg {
+    min-height: 150vh;
+  }
+
+  .world-backdrop__landmark {
+    opacity: 0.78;
+  }
+}
+
+@media (max-width: 420px) {
+  .command-rail__readouts {
+    gap: 0;
+  }
+
+  .readout {
+    padding-inline: var(--space-1);
+  }
+
+  .readout strong {
+    font-size: var(--text-xs);
+  }
+
+  .deployment-screen__board {
+    padding: var(--space-2);
   }
 }
 

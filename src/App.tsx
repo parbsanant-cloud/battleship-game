@@ -11,6 +11,7 @@ import Comms from './components/Comms.tsx'
 import GameOver from './components/GameOver.tsx'
 import Landing from './components/Landing.tsx'
 import PlacementPanel from './components/PlacementPanel.tsx'
+import WorldBackdrop from './components/WorldBackdrop.tsx'
 import { FLEET, inBounds, toIndex } from './game/board.ts'
 import { chooseAIShot } from './game/ai.ts'
 import { canPlace, shipCells } from './game/placement.ts'
@@ -351,6 +352,7 @@ export default function App() {
   if (!launched) {
     return (
       <div className="app app--landing">
+        <WorldBackdrop />
         <Landing
           difficulty={state.difficulty}
           exiting={exiting}
@@ -367,6 +369,7 @@ export default function App() {
 
   return (
     <div className="app app--command">
+      <WorldBackdrop />
       <CommandRail
         phase={phase}
         winner={state.winner}
