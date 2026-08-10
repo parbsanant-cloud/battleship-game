@@ -43,7 +43,9 @@ export default function BoardDock({
   scanning = false,
 }: BoardDockProps) {
   return (
-    <section className={`board-dock${scanning ? ' board-dock--scanning' : ''}`}>
+    <section
+      className={`board-dock board-dock--${variant}${scanning ? ' board-dock--scanning' : ''}`}
+    >
       <div className="board-dock__header">
         <div>
           <span className="tactical-label">{variant === 'player' ? 'Homeward waters' : 'Divine waters'}</span>
