@@ -1,79 +1,164 @@
-# Battleship AI (Cognition Take-Home Project)
+# NOSTOS
 
-## Project Overview
+### A game of war, fate, and the long voyage home.
 
-Battleship is a browser-based, single-player Battleship game against an AI
-opponent. It is client-side only: there is no backend, account system, or
-network dependency during play.
-
-I built this project as part of the Cognition interview process with the goal
-of demonstrating thoughtful collaboration with Devin, iterative engineering,
-and disciplined software development rather than simply generating code.
+NOSTOS is Battleship reimagined as a mythic voyage. A fleet that survived ten
+years of war is returning to Ithaca, but the sea is ruled by Poseidon's wrath.
+Place the vessels, cross the wine-dark water, and find a way home before the
+last mast disappears beneath it.
 
 ## Live Demo
 
-- **Play the game:** <https://battleship-game-sage.vercel.app/>
-- **GitHub repository:** <https://github.com/parbsanant-cloud/battleship-game>
+- **Play NOSTOS:** <https://battleship-game-sage.vercel.app/>
+- **Repository:** <https://github.com/parbsanant-cloud/battleship-game>
 
-## Features
+## The Experience
 
-- Manual fleet placement with hover validation preview
-- Randomize and clear placement controls
-- Ship rotation, including the `R` keyboard shortcut
-- Easy AI
-- Normal hunt/target AI
-- Hit, miss, and sunk feedback with fleet-status panels
-- Win and lose detection
-- Enemy fleet reveal after defeat
-- Play Again while preserving the selected difficulty
-- Responsive layout down to 375px
-- Accessibility support: `aria-label`s on cells and boards, `aria-live`
-  announcements, disabled spent cells, and visible focus styles
-- Reduced-motion support
-- Automated Vitest suite
+The game begins with a quiet briefing and a fleet waiting to be placed. Once
+the crossing starts, two chart-like boards frame the voyage: **YOUR FLEET**
+marks the homeward waters and **POSEIDON'S WATERS** hides the enemy fleet. The
+Chronicle and OMENS & VOICES feed turn shots into a small running story.
 
-The project intentionally prioritizes correctness, accessibility, and
-maintainability over adding extra gameplay features outside the assignment
-scope.
+The presentation was built in iterations rather than added as a single theme
+pass. The core game came first; repeated play, rendered review, and user
+critique then shaped the NOSTOS copy, vessel names, boards, sunk silhouettes,
+audio, responsive layout, and the Odyssey backdrop.
 
-## Tech Stack
+## Gameplay
 
-- React 19
-- TypeScript
-- Vite
-- Vitest
-- Vercel
-- oxlint
-- Plain CSS
-- Node.js >= 22.12
+### Placement
 
-There are no runtime dependencies beyond React and React DOM.
+Place five vessels on the 10×10 board. The selected ship shows a valid or
+invalid footprint preview, `R` rotates the selected ship, and **Randomize** and
+**Clear** support faster setup. Ships may touch; they may not overlap or leave
+the board. The crossing begins once all five are placed.
 
-## Project Structure
+### Firing
 
-```text
-src/
-├── App.tsx                 # Single useReducer owner; renders state and dispatches actions
-├── components/             # Presentational board, placement, status, and game-over UI
-│   ├── Board.tsx
-│   ├── Cell.tsx
-│   ├── FleetStatus.tsx
-│   ├── GameOver.tsx
-│   ├── PlacementPanel.tsx
-│   └── StatusBar.tsx
-├── game/                   # Pure TypeScript game boundary; no React imports
-│   ├── types.ts            # Domain types and reducer actions
-│   ├── board.ts            # 10×10 coordinates, indices, and board construction
-│   ├── placement.ts        # Placement validation and fleet generation
-│   ├── rules.ts            # Shot resolution and fleet destruction
-│   ├── ai.ts               # Easy and Normal shot selection/memory updates
-│   └── reducer.ts          # State transitions
-└── styles.css              # Naval theme and responsive layout
-```
+During your turn, choose an unfired cell on Poseidon's board. A shot becomes a
+hit, miss, or sunk result, and the AI answers with its own shot. Resolved cells
+are disabled so an already-used coordinate cannot be fired again.
 
-## Local Development
+### Hits, misses, and sinking
 
-Use Node 22.12.0, matching `.nvmrc` and the package engine requirement:
+Hits use a filled ember/scorched-timber treatment, misses use pale foam, and
+sunk footprints become disturbed dark water beneath a top-down wooden galley
+silhouette. On defeat, the surviving enemy ships are revealed. Fleet panels
+track each vessel as `READY`, `OPERATIONAL`, `DAMAGED`, `CRITICAL`, or
+`DESTROYED`.
+
+### Two seas
+
+- **Mortal Seas** is the Easy mode: Poseidon fires randomly at cells he has not
+  tried.
+- **Wrath of Poseidon** is Normal mode: the god hunts until he finds a hit,
+  targets orthogonal neighbours, and follows an aligned run when multiple
+  unresolved hits reveal a direction.
+
+### Victory and defeat
+
+Sink the opposing fleet to reach Ithaca. If Poseidon sinks yours first, the
+storm closes over the last mast. The final account can be dismissed so the
+finished boards and the revealed enemy fleet remain inspectable, and **SAIL
+AGAIN** starts a fresh match with the selected difficulty preserved.
+
+## What Makes NOSTOS Different
+
+NOSTOS keeps the deterministic rules of Battleship but changes the frame
+around them. The UI speaks in terms of a crossing, homeward waters, offerings,
+omens, and Ithaca rather than a modern tactical command. The boards remain
+functional charts: bronze-edged dark timber marks a living vessel, ember marks
+damage, and the galley itself explains a sinking instead of a bright bounding
+box.
+
+Behind the game is a hand-drawn night sea made from CSS layers and inline SVG:
+moonlit Aegean water, route marks, storms, Cyclops, Sirens, Scylla,
+Charybdis, and a distant Ithaca. Landmarks sit in margins and page gaps rather
+than over the cells. Motion is restrained and disabled for reduced-motion
+users.
+
+## Architecture
+
+- **React 19, TypeScript, Vite, Vitest, plain CSS, and Vercel.** Node
+  `>=22.12` is required. There are no added runtime dependencies beyond React
+  and React DOM.
+- **Pure game boundary.** `src/game/` has no React imports. Board helpers,
+  placement, rules, AI memory, and reducer transitions are pure TypeScript
+  concerns.
+- **Single state owner.** `App.tsx` owns the `useReducer` and passes state and
+  callbacks through presentational components. `Board`, `Cell`, `BoardDock`,
+  `FleetStatus`, `Comms`, `GameOver`, and placement components render the
+  experience. `WorldBackdrop` is a separate, pointer-free presentation layer.
+- **Information boundary.** Before rendering, `App.tsx` masks enemy ship cells
+  until defeat. The AI receives only its own memory, not the player's hidden
+  board.
+
+Boards use flat 10×10 arrays indexed by `r * 10 + c`; the UI adds A–J and
+1–10 coordinate labels. Sunk overlays use the same cell, gap, and board-pad
+geometry as the grid.
+
+## AI Opponent
+
+Easy, shown as **Mortal Seas**, chooses uniformly from cells it has not fired
+at. It has no access to hidden ship positions.
+
+Normal, shown as **Wrath of Poseidon**, uses hunt/target behavior:
+
+1. It hunts among unfired cells that can still accommodate the smallest
+   surviving ship, with a random-unfired fallback if no feasible candidate
+   remains.
+2. After a hit, it considers unfired orthogonal neighbours.
+3. When unresolved hits align, it extends along that axis and can fill an
+   unfired interior gap.
+4. When a ship sinks, only that ship's hit cells leave unresolved-hit memory;
+   hits belonging to another surviving ship remain targetable.
+
+This gives Normal a sharper, more hostile rhythm without granting Poseidon
+information the player does not have.
+
+## Design & Narrative
+
+The visual language is a restrained Homeric night voyage: deep Aegean blue,
+midnight indigo, muted teal, moonlit silver, and bronze. Fleet names are
+ancient vessels—Great War Galley, Heavy Trireme, War Trireme, Scout Galley,
+and Raider. Story beats persist outside the reducer's eight-entry battle log,
+so the crossing can accumulate narrative moments without changing game rules.
+
+The backdrop is deliberately hand-drawn. Cyclops is a volcanic island with a
+faint eye deep in a cave; Sirens are filled silhouettes on a rock; Scylla and
+Charybdis remain atmospheric discoveries; Poseidon is implied by storms,
+lightning, and water; Ithaca is distant firelight.
+
+## Audio
+
+Combat uses separate pools for splash, hit, explosion, sinking, victory, and
+defeat effects, plus an independent queued voice channel with its own toggle.
+The final NOSTOS cut replaced the modern military-command voice with processed
+TTS in a lower, cavernous Poseidon register and moved the effects toward
+wooden hull impacts and ancient-sea textures. This is processed TTS, not a
+voice actor.
+
+Audio work was validated on this machine by checking asset responses, measured
+levels, and HTML audio element playback progress, including simultaneous SFX
+and voice progress. There is no audio device here, so listening was not
+claimed; the user confirmed the final audio fixes by ear.
+
+## Accessibility & Responsive Design
+
+Boards and cells retain descriptive ARIA labels, live announcements remain
+separate from the visible comms feed, spent cells are disabled, and focus
+styles remain visible. Placement supports keyboard rotation with `R`, and
+sound and voice can be muted independently.
+
+The layout reflows the command rail and combat order for phone widths, uses
+fluid board cells while preserving square 11×11 tracks and A–J/1–10 labels,
+and keeps the sunk-galley overlay aligned at desktop and narrow widths.
+Typography and spacing use responsive CSS. Backdrop animation, water motion,
+and whirlpool motion are covered by the existing reduced-motion guard.
+
+## Running Locally
+
+Use Node 22.12.0:
 
 ```bash
 source ~/.nvm/nvm.sh
@@ -86,122 +171,43 @@ The development server runs at `http://localhost:5173`.
 
 | Command | Description |
 | --- | --- |
-| `npm run dev` | Dev server with hot reload |
-| `npm run build` | Typecheck + production build to `dist/` |
+| `npm run dev` | Start the Vite development server |
+| `npm run build` | Typecheck and build the production bundle |
 | `npm run preview` | Serve the production build locally |
-| `npm run typecheck` | `tsc -b --noEmit` |
-| `npm run lint` | oxlint |
+| `npm run typecheck` | Run `tsc -b --noEmit` |
+| `npm run lint` | Run oxlint |
 | `npm test` | Run the Vitest suite once |
-| `npm run test:watch` | Vitest in watch mode |
-
-## Deployment
-
-The app is a static Vercel site using the Vite preset: `npm run build` emits to
-`dist/`, and Vercel reads the Node version from `engines.node`. Pushes to `main`
-deploy to production, pull requests get preview URLs, and no environment
-variables are required.
-
-## AI Difficulty
-
-Easy mode fires uniformly at random among cells it has not fired at yet.
-
-Normal mode uses hunt/target behavior. It hunts randomly until it gets a hit,
-then chooses unfired orthogonal neighbours. Once two unresolved hits are
-aligned, it extends along that axis, including filling an unfired interior gap.
-It tracks which ships its own shots have sunk and skips hunt cells too cramped
-to hold the smallest ship still afloat. When a ship sinks, only that ship's
-cells are removed from unresolved-hit memory. Hits belonging to an adjacent
-ship that is still afloat remain, so the AI stays in target mode.
-
-The shot-selection function is deliberately fair:
-`chooseAIShot` receives only `AIMemory` — fired indices, unresolved hits, and
-the ships its own shots have sunk — plus the difficulty. It never receives the
-player board or fleet, so it cannot see hidden ships.
-
-## Architecture
-
-Game logic lives in `src/game/` as pure TypeScript with zero React imports.
-`App.tsx` owns the single `useReducer`; there is no Context layer. State and
-callbacks flow down through props, and components dispatch actions back up
-through callbacks. Presentational components live in `src/components/`.
-Boards use flat 10×10 arrays indexed by `r * 10 + c`.
-
-Separating rules and AI from rendering makes the rules unit-testable without a
-DOM or renderer. It also keeps the AI's information boundary enforceable:
-components cannot physically leak hidden ship positions because the enemy
-board is masked in one place in `App.tsx` before it is rendered. Rendering is
-then a pure function of state.
+| `npm run test:watch` | Run Vitest in watch mode |
 
 ## Testing
 
-There are three verification layers:
+The current suite contains **73 Vitest tests** covering board helpers,
+placement, rules, reducer transitions, and AI behavior. The standard
+verification pass is:
 
-1. **Automated:** 69 Vitest tests cover board, placement, rules, reducer, and
-   AI behavior. The project also runs `npm run typecheck`, `npm run lint`, and
-   `npm run build`.
-2. **Manual QA:** Every UI stage was browser-verified, including complete games
-   to both a player win and an AI win, keyboard-only placement and firing,
-   reduced-motion behavior, the 375px layout with no horizontal scroll, and an
-   empty console.
-3. **Production verification:** After merge, the deployed Vercel bundle was
-   confirmed byte-identical to a fresh local build of `main`. Instrumented
-   Normal games on the live site recorded 179 hunt shots with zero
-   infeasible-cell violations and zero repeated or out-of-bounds AI shots.
+```bash
+npm test
+npm run typecheck
+npm run lint
+npm run build
+```
 
-## How I Used Devin
+The responsive presentation has also been checked at narrow phone widths,
+including board fit, descendant overflow, sunk-overlay geometry, reduced
+motion, and rendered landmark placement. Audio browser checks measure network
+responses, levels, and playback progress rather than claiming unaudible
+machine playback.
 
-I asked Devin to plan before writing any code, and I reviewed the proposed
-architecture. I intentionally cut scope to reduce unnecessary complexity; the
-first plan draft was deliberately reduced.
+## Deployment
 
-Implementation proceeded as staged pull requests:
+NOSTOS is a static Vercel site using the Vite preset. `npm run build` emits
+`dist/`, Vercel reads the Node version from `engines.node`, pushes to `main`
+deploy production, and pull requests receive previews. No environment
+variables are required.
 
-1. scaffold
-2. types and board
-3. placement
-4. rules
-5. reducer
-6. placement UI
-7. battle screen
-8. hunt/target AI
-9. reveal-on-defeat
-10. release-candidate review
+## Debugging & Iteration
 
-Each stage required tests before I approved it, and I reviewed every stage
-manually before the next began. I applied my own judgment rather than
-accepting every recommendation: I approved some proposals and rejected or
-changed others. I also found the late-game AI bug myself by playing the game.
-
-During development, I also discovered additional improvements through manual
-playtesting and had Devin implement targeted fixes after validating the issues
-myself.
-
-## Engineering Tradeoffs
-
-- **Multiplayer:** It needs a server, authentication, matchmaking, and
-  realtime transport, so it is outside this assignment.
-- **Backend:** A local single-player match has nothing to persist or
-  coordinate, so static hosting keeps deployment simple.
-- **Persistence:** A match is a single sitting; resumable state would add
-  migration and invalidation concerns without enough user benefit here.
-- **Probability-density AI:** Hunt/target is sufficient for this assignment;
-  density scoring adds complexity and makes fairness and testing harder.
-- **Sound:** It conveys no gameplay information here and would require
-  autoplay handling and a mute control.
-- **Hard difficulty:** A third tuning profile would add balancing and testing
-  work without demonstrating a different architectural capability.
-- **Additional game modes:** They would expand rules, UI, and test scope beyond
-  the human-versus-AI match required for this assignment.
-
-## Known Limitations
-
-1. Board cells are individually tabbable rather than an arrow-key grid, so
-   traversing a board by keyboard takes many tab presses. Spent cells are now
-   disabled and skipped to reduce that cost.
-2. Normal mode assumes two aligned unresolved hits belong to one ship. Two
-   adjacent ships in the same row or column can occasionally cause a
-   mis-target; the AI self-corrects on the resulting miss.
-3. The feasibility check applies only during hunting. Target-mode follow-up
-   shots use their own hit-anchored reasoning and are not feasibility-filtered.
-4. Parity and probability-density hunting remain deliberately out of scope.
-5. There is no persistence, so refreshing the page restarts the game.
+The resolved issues and the actual sequence of diagnosis, critique, and
+validation are recorded in [`DEBUGGING.md`](./DEBUGGING.md). The document
+distinguishes functional, UX, visual, audio, and design-iteration work rather
+than presenting every subjective refinement as a runtime bug.

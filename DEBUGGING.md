@@ -7,6 +7,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 1. Node version mismatch
 
+- **Classification:** Functional bug
 - **Bug:** Vite could not start or build in the development environment.
 - **Cause:** Vite 8 requires Node `^20.19 || >=22.12`, while the environment
   defaulted to Node 20.18.1.
@@ -17,6 +18,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 2. Invalid CSS colour token
 
+- **Classification:** Visual defect
 - **Bug:** Text fell back to its inherited colour because the `--text` CSS
   custom property was ignored.
 - **Cause:** A stray non-ASCII character made the hex literal invalid:
@@ -27,6 +29,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 3. Vacuously-true fleet destruction
 
+- **Classification:** Functional bug
 - **Bug:** An empty fleet could be reported as destroyed.
 - **Cause:** `Array.every` returns `true` for an empty array. Both fleets are
   empty during placement, so checking at the wrong time could declare an
@@ -37,6 +40,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 4. Name shadowing in shot results
 
+- **Classification:** Functional bug
 - **Bug:** A shot-result field made the `shipCells` name ambiguous in code that
   also used the ship-footprint helper.
 - **Cause:** The result field shared its name with the exported `shipCells()`
@@ -48,6 +52,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 5. Lint warning from a component module export
 
+- **Classification:** Functional bug
 - **Bug:** Fast Refresh linting warned about `Board.tsx`.
 - **Cause:** The `coordLabel` helper was exported from a component module,
   weakening Fast Refresh guarantees.
@@ -56,6 +61,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 6. Unsafe cast in tests
 
+- **Classification:** Functional bug
 - **Bug:** A test could hide a missing fleet-spec lookup.
 - **Cause:** `FLEET.find(...) as ShipSpec` suppressed the real
   `| undefined` type and could turn a lookup failure into a confusing
@@ -67,6 +73,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 7. Battle fleet panels did not stack on narrow screens
 
+- **Classification:** UX bug
 - **Bug:** At approximately 375px, the two fleet-status panels stayed side by
   side and overflowed instead of following the stacked board layout.
 - **Cause:** The responsive breakpoint restacked the boards but not the
@@ -79,6 +86,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 8. Revealed enemy ships were nearly invisible
 
+- **Classification:** Visual defect
 - **Bug:** On defeat, revealed ships looked like slightly lighter water rather
   than ships.
 - **Cause:** The initial revealed fill, `#3a5061`, measured only 1.97:1 against
@@ -89,6 +97,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 9. Spent cells stayed interactive
 
+- **Classification:** UX bug
 - **Bug:** Cells with resolved shots remained focusable buttons even though
   clicking them could not do anything.
 - **Cause:** `Cell` derived `disabled` only from the board-level `interactive`
@@ -101,6 +110,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 10. Normal hunt fired into impossible late-game pockets
 
+- **Classification:** Functional bug
 - **Bug:** Normal hunt could select an unfired cell where no remaining ship
   could fit, especially when only a three-cell ship remained.
 - **Cause:** Hunt mode selected uniformly from every unfired cell without
@@ -119,6 +129,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 11. Battle log clipped its own history
 
+- **Classification:** UX bug
 - **Bug:** The reducer retained eight battle-log entries, but the panel's fixed
   height showed roughly three, leaving most history unreachable.
 - **Cause:** `.battle-log__list` used a `10rem` `max-height` with
@@ -129,6 +140,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 12. Placement previews lifted per cell on hover
 
+- **Classification:** Visual defect
 - **Bug:** A multi-cell green or red placement preview rose one cell at a
   time, so it no longer read as a single ship footprint.
 - **Cause:** Generic per-cell hover lift also applied to preview cells.
@@ -139,6 +151,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 13. Fleet-status indicators were not mirrored between fleets
 
+- **Classification:** UX bug
 - **Bug:** Player and enemy fleet panels presented ship indicators differently,
   making the paired panels hard to compare.
 - **Cause:** The indicator treatment was conditional on which fleet panel was
@@ -150,6 +163,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 14. Vertical sunk silhouettes sat off their footprint
 
+- **Classification:** Visual defect
 - **Bug:** Vertical sunk-ship overlays were displaced from the cells they
   represented.
 - **Cause:** The SVG is rotated 90 degrees for vertical ships, and rotating
@@ -161,6 +175,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 15. Sunk silhouettes looked like bright blocky shapes
 
+- **Classification:** Design iteration
 - **Bug:** Sunk silhouettes were too bright, and their steel detail appeared
   above rather than within the hull.
 - **Cause:** The original red treatment used high-lightness fills and
@@ -172,6 +187,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 16. Sound effects went silent after voice callouts landed
 
+- **Classification:** Audio defect
 - **Bug:** Splash, hit, and explosion effects stopped decoding after the voice
   feature landed. This was our own regression and should have been caught in
   review.
@@ -181,14 +197,18 @@ appeared in the rendered browser UI or required user confirmation.
   effect. This was not a mixing or shared-element problem: SFX and voice
   already used separate elements.
 - **Resolution:** Restored the `.wav` effect URLs and rebalanced the mix
-  without changing the audio architecture.
+  without changing the audio architecture. The later NOSTOS re-cut replaced
+  the modern military-command voice with processed TTS in a lower register
+  with cavernous resonance and moved the effects toward wooden hull impacts.
 - **Validation:** Confirmed valid audio responses and simultaneous progress on
   the SFX and voice elements. The build machine had no audio device, so
   levels and playback progress were measured rather than heard; the user
-  confirmed the result by ear.
+  confirmed both the earlier fix and the NOSTOS re-cut by ear. The voice is
+  processed TTS, not a voice actor.
 
 ## 17. The miss splash cue was inaudible
 
+- **Classification:** Audio defect
 - **Bug:** The miss splash played but was inaudible compared with hit and
   explosion cues.
 - **Cause:** End-to-end tracing exonerated the event path, routing, muting, and
@@ -202,6 +222,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 18. The end-of-game summary required scrolling
 
+- **Classification:** UX bug
 - **Bug:** The game-over result and Play Again control sat at the bottom of the
   page, below the fold when the game ended.
 - **Cause:** The existing summary rendered inline instead of as a viewport-level
@@ -213,6 +234,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 19. The mission report blocked inspection of the final board
 
+- **Classification:** UX bug
 - **Bug:** The centred report covered the enemy fleet deliberately revealed on
   defeat, making the reveal difficult to study.
 - **Cause:** The modal was always present for the completed game and had no
@@ -227,6 +249,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 20. The redesign review found several rendered-UI defects
 
+- **Classification:** Design iteration
 - **Bug:** Rendered review exposed multiple presentation defects: the command
   rail Status readout truncated to `YOUR ACT…`; difficulty displayed the raw
   lowercase union value; the roster count had broken spacing and showed
@@ -248,6 +271,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 21. The comms feed could hide its newest message
 
+- **Classification:** UX bug
 - **Bug:** Immediately after a shot, the newest transmission could disappear
   from the visible feed.
 - **Cause:** The live region is intentionally clipped for screen readers, while
@@ -261,6 +285,7 @@ appeared in the rendered browser UI or required user confirmation.
 
 ## 22. Enemy roster names were unnecessarily hidden
 
+- **Classification:** UX bug
 - **Bug:** The redesign showed `Unknown contact N` and `UNASSESSED` for enemy
   ships even though the player already had the relevant ship identities.
 - **Cause:** The redesign treated names as hidden information despite the
@@ -272,10 +297,139 @@ appeared in the rendered browser UI or required user confirmation.
 - **Validation:** Browser review confirmed mirrored rosters without revealing
   enemy positions or changing the fairness boundary.
 
+## 23. Sunk galley overlays drifted above their footprints
+
+- **Classification:** Visual defect
+- **Bug:** During the NOSTOS end-to-end test, sunk galley overlays sat as much
+  as 15px above the cells they represented at desktop widths. They aligned at
+  375px, so the earlier narrow-screen check did not expose the defect.
+- **Cause:** `.board` pinned its columns but left rows auto-sized. Surplus
+  height stretched the real row pitch to roughly 39.5px, while the overlay
+  `calc()` assumed the 38px pitch from `var(--cell) + var(--gap)`, accumulating
+  about 1.5px of drift per row.
+- **Resolution:** Pinned the rows with
+  `grid-template-rows: repeat(11, var(--cell))` in commit `0e11af9`.
+- **Validation:** Measured every sunk silhouette against the union rectangle of
+  its footprint cells for all five fleet lengths in both orientations at
+  desktop and 375px. Every edge delta was `0.00px`.
+
+## 24. Sunk galley oars were clipped
+
+- **Classification:** Visual defect
+- **Bug:** The oars on the top-down sunk galley artwork disappeared at the
+  hull boundary.
+- **Cause:** Oars extended beyond the hull but were drawn inside the hull's
+  clip group.
+- **Resolution:** Moved the oars outside the clipped hull group.
+- **Validation:** Browser inspection of the rendered sunk silhouettes showed the
+  full oars beyond the hull.
+
+## 25. Chronicle story beats disappeared mid-game
+
+- **Classification:** Functional bug
+- **Bug:** Narrative beats derived from the battle log disappeared or changed
+  order during longer matches.
+- **Cause:** The reducer intentionally caps the battle log at eight entries, so
+  presentation beats derived from that log were evicted with older messages.
+- **Resolution:** Added persistent `storyBeats` presentation state and a
+  `storyBeatRef` in `App`, while leaving the reducer and game log contract
+  unchanged.
+- **Validation:** Browser playthroughs showed the Chronicle retaining its
+  triggered beats after the underlying battle log rolled forward.
+
+## 26. The first Poseidon offering beat used the wrong event
+
+- **Classification:** Functional bug
+- **Bug:** “Poseidon has taken his first offering” appeared when the player sank
+  an enemy vessel.
+- **Cause:** The trigger was keyed to the wrong side of the battle rather than
+  to the message emitted when the player's own ship was lost.
+- **Resolution:** Re-keyed the beat to messages containing `The sea has claimed`.
+- **Validation:** The presentation trigger now follows the AI sinking a player
+  vessel; sinking an enemy vessel does not fire it.
+
+## 27. The NOSTOS reskin still looked like a modern naval board
+
+- **Classification:** Design iteration
+- **Bug:** This was not a runtime failure: the copy, fleet names, narrative,
+  and sunk artwork had changed, but the grid still read as a modern blue
+  tactical interface—teal water, raised rounded tiles, a red sunk bounding
+  box, and a monospace coordinate ruler.
+- **Cause:** The board surface and cell states had not yet adopted the same
+  Homeric visual language as the rest of the presentation.
+- **Resolution:** PR #29 reskinned the boards and states. It took three
+  passes: the first made ships nearly invisible and hits outline-only; the
+  second made ships bright caramel and too close in hue to hits; the third
+  settled on cool dark timber for intact and revealed ships, charred ember
+  for hits, ivory foam rings for misses, and disturbed dark water for sunk
+  footprints, with the galley carrying the sunk meaning.
+- **Validation:** Each pass was reviewed in rendered placement and combat
+  screenshots, including a state with intact ships, hits, misses, and sunk
+  silhouettes visible together. Gameplay geometry and alignment remained
+  unchanged.
+
+## 28. Mobile clipping was hidden by a page-level false negative
+
+- **Classification:** UX bug
+- **Bug:** A real iPhone-sized review showed clipped command-rail content and
+  horizontal layout pressure even though the earlier check reported
+  `document.scrollWidth === clientWidth`.
+- **Cause:** Page-level scroll width is blind to descendants clipped inside
+  their own boxes. At 375px, readouts measured `328 / 310`, difficulty
+  `86 / 61`, accuracy `79 / 61`, and the header `340 / 334` for
+  `scrollWidth / clientWidth`. At 320px, `body { min-width: 320px }` also
+  caused genuine document overflow.
+- **Resolution:** Reflowed the command rail into mobile readout rows, made
+  `--cell` fluid through 320px, removed the body minimum width, tightened
+  mobile spacing, and added responsive `clamp()` typography.
+- **Validation:** Rechecked `document`, `body`, and `client` widths at 320,
+  375, and 390px; walked descendants for clipped or offscreen content; and
+  re-measured sunk overlays under fluid cells. The worst overlay deviation was
+  `0.06px` at 320/375px and `0.11px` at 390px.
+
+## 29. The first Odyssey backdrop did not render as a world
+
+- **Classification:** Design iteration
+- **Bug:** The first backdrop technically rendered but did not achieve the
+  intended ancient illustrated sea. Landmarks were distorted or invisible,
+  the sea read as near-black, and some landmarks showed through translucent
+  panels.
+- **Cause:** A single 1600×2400 SVG with `preserveAspectRatio="none"` smeared
+  landmarks across viewport aspect ratios. The old fixed, negative-z-index
+  `body::before` and `body::after` layers composited over the new backdrop;
+  the centre vignette crushed the page margins. The sea gradient was too dark,
+  and placement was not checked against the actual rendered UI column.
+- **Resolution:** Split landmarks into individually sized, preserved-aspect
+  inline SVGs; removed the competing body layers; lifted the Aegean palette;
+  and positioned landmarks in actual margins and below-fold gaps. Two seam
+  defects in that fix were then resolved: the vertical seam at the content
+  column and the horizontal seam where the viewport-height body painting area
+  ended. The sea moved to `:root` with `background-attachment: fixed`.
+- **Validation:** Desktop and mobile rendered geometry checks confirmed
+  landmarks outside gameplay panels, while bottom-of-page screenshots checked
+  sea continuity. An intermediate pass appended about 1.5 screens of empty
+  mobile water to host all five landmarks; that contradicted the request to
+  reduce scrolling, so it was reverted to two mobile landmarks in real
+  negative space and the document returned from `3520px` to `1891px`.
+
+## 30. Cyclops and Sirens read as cartoons
+
+- **Classification:** Design iteration
+- **Bug:** Screenshot review showed the Cyclops as a flat blob with a large
+  high-contrast eyeball, closer to a whale or a hat than a distant mythic
+  island. The Sirens were thin outlined arcs with dots that read as arches.
+- **Cause:** The first silhouettes used overly literal, high-contrast shapes
+  instead of atmospheric forms.
+- **Resolution:** Redrew Cyclops as a jagged volcanic island with a cave mouth
+  and a small faint eye-glow deep inside. Redrew Sirens as filled, draped
+  silhouettes on a jagged rock, removing bright outlines and head dots.
+- **Validation:** Screenshot review confirmed both landmarks read as
+  low-contrast discoveries rather than foreground characters.
+
 ## Closing note
 
-These entries cover resolved issues found during implementation, review, and
-user verification. The project was validated with the relevant combination of
-unit tests, typechecking, linting, browser checks, rendered-UI inspection, and
-production-build verification; no entry should be read as a claim that every
-historical defect was detectable by automated tests alone.
+These 30 entries cover resolved issues found during implementation, review, and
+user verification. Classifications distinguish behaviour failures from
+usability problems, rendering defects, audio failures, and design iterations.
+The validation method is stated per entry; no entry should be read as a claim
+that every historical defect was detectable by automated tests alone.
