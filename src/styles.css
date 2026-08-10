@@ -57,7 +57,8 @@
     radial-gradient(ellipse at 10% 35%, rgba(50, 131, 145, 0.34), transparent 30rem),
     radial-gradient(ellipse at 88% 61%, rgba(105, 47, 66, 0.38), transparent 34rem),
     repeating-linear-gradient(172deg, transparent 0 8rem, rgba(146, 183, 184, 0.08) 8.05rem 8.12rem, transparent 8.2rem 13rem),
-    linear-gradient(180deg, #1c4661 0%, #0c2a43 42%, #112a40 70%, #172a3e 100%);
+    linear-gradient(180deg, #20516b 0%, #12415a 42%, #173d55 70%, #1d4058 100%);
+  background-attachment: fixed;
   font-family: var(--font-sans);
   line-height: 1.5;
 }
@@ -1980,6 +1981,34 @@ input {
 
   .world-backdrop__landmark {
     display: none;
+  }
+
+  .app--landing .world-backdrop__cyclops,
+  .app--command .world-backdrop__cyclops,
+  .app--command .world-backdrop__charybdis {
+    display: block;
+  }
+
+  .app--landing .world-backdrop__cyclops {
+    top: 8rem;
+    left: -2rem;
+    width: 10rem;
+    height: 6rem;
+  }
+
+  .app--command .world-backdrop__cyclops {
+    top: 19rem;
+    left: -4rem;
+    width: 8rem;
+    height: 2rem;
+  }
+
+  .app--command .world-backdrop__charybdis {
+    top: 110rem;
+    right: 1rem;
+    left: auto;
+    width: 7rem;
+    height: 6rem;
   }
 
   .world-backdrop__storm {
