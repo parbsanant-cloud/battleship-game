@@ -701,16 +701,17 @@ input {
 
 .board-dock--player .board {
   background:
-    radial-gradient(ellipse at 28% 18%, rgba(212, 173, 97, 0.12), transparent 40%),
+    radial-gradient(ellipse at 28% 18%, rgba(212, 173, 97, 0.1), transparent 40%),
     repeating-linear-gradient(168deg, rgba(198, 166, 105, 0.05) 0 1px, transparent 1px 17px),
-    linear-gradient(145deg, #211b20 0%, #12121d 56%, #090a13 100%);
+    linear-gradient(145deg, #181a29 0%, #101321 56%, #090a13 100%);
 }
 
 .board-dock--enemy .board {
   background:
-    radial-gradient(ellipse at 72% 20%, rgba(105, 74, 82, 0.12), transparent 36%),
-    repeating-linear-gradient(166deg, rgba(122, 113, 103, 0.045) 0 1px, transparent 1px 15px),
-    linear-gradient(145deg, #111320 0%, #090d17 58%, #06070e 100%);
+    radial-gradient(ellipse at 72% 20%, rgba(137, 83, 91, 0.18), transparent 36%),
+    radial-gradient(ellipse at 18% 78%, rgba(54, 84, 78, 0.12), transparent 42%),
+    repeating-linear-gradient(166deg, rgba(155, 142, 119, 0.06) 0 1px, transparent 1px 15px),
+    linear-gradient(145deg, #121625 0%, #090e1a 58%, #06070e 100%);
   border-color: rgba(137, 103, 92, 0.42);
   box-shadow:
     inset 0 0 0 var(--space-2) rgba(1, 3, 9, 0.5),
@@ -760,43 +761,43 @@ input {
   transform: none;
 }
 
-.board-dock--player .cell {
-  background: rgba(72, 52, 34, 0.2);
+.board-dock--player .cell--empty:not(.cell--preview-valid):not(.cell--preview-invalid) {
+  background: rgba(13, 19, 31, 0.4);
   border-color: rgba(190, 157, 101, 0.34);
 }
 
-.board-dock--enemy .cell {
+.board-dock--enemy .cell--empty {
   background: rgba(7, 13, 23, 0.34);
   border-color: rgba(146, 125, 102, 0.28);
 }
 
 .cell--ship {
   background:
-    linear-gradient(145deg, rgba(112, 77, 46, 0.74), rgba(43, 31, 28, 0.88)),
-    repeating-linear-gradient(175deg, rgba(215, 184, 115, 0.08) 0 1px, transparent 1px 5px);
-  border-color: rgba(196, 157, 91, 0.72);
+    linear-gradient(145deg, #795033, #332326),
+    repeating-linear-gradient(175deg, rgba(236, 199, 124, 0.14) 0 1px, transparent 1px 5px);
+  border-color: rgba(215, 174, 99, 0.86);
   box-shadow:
-    inset 0 0 0 1px rgba(229, 196, 129, 0.16),
+    inset 0 0 0 1px rgba(245, 211, 143, 0.24),
     inset 0 -2px 0 rgba(3, 5, 10, 0.5);
 }
 
 .cell--revealed {
   background:
-    linear-gradient(145deg, rgba(92, 68, 48, 0.68), rgba(32, 28, 29, 0.9)),
-    repeating-linear-gradient(175deg, rgba(215, 184, 115, 0.06) 0 1px, transparent 1px 5px);
-  border-color: rgba(178, 143, 91, 0.62);
+    linear-gradient(145deg, #674832, #2b2227),
+    repeating-linear-gradient(175deg, rgba(225, 190, 116, 0.11) 0 1px, transparent 1px 5px);
+  border-color: rgba(198, 158, 93, 0.76);
   box-shadow:
-    inset 0 0 0 1px rgba(229, 196, 129, 0.12),
+    inset 0 0 0 1px rgba(239, 204, 133, 0.2),
     inset 0 -2px 0 rgba(3, 5, 10, 0.52);
 }
 
 .cell--hit {
   background:
-    linear-gradient(145deg, #824936, #542c32),
-    repeating-linear-gradient(155deg, rgba(246, 184, 111, 0.16) 0 1px, transparent 1px 6px);
-  border-color: #b27a50;
+    linear-gradient(145deg, #a15035, #632a2c),
+    repeating-linear-gradient(155deg, rgba(255, 200, 118, 0.2) 0 1px, transparent 1px 6px);
+  border-color: #d2975d;
   box-shadow:
-    inset 0 0 0 1px rgba(233, 161, 88, 0.34),
+    inset 0 0 0 1px rgba(255, 195, 108, 0.46),
     inset 0 -2px 0 rgba(25, 10, 12, 0.52);
 }
 
@@ -812,9 +813,9 @@ input {
   height: calc(var(--space-2) + 2px);
   margin: auto;
   content: '';
-  border: var(--line) solid rgba(228, 224, 201, 0.78);
+  border: var(--line) solid rgba(240, 234, 207, 0.9);
   background: transparent;
-  box-shadow: 0 0 0 1px rgba(228, 224, 201, 0.12);
+  box-shadow: 0 0 0 1px rgba(240, 234, 207, 0.2);
   border-radius: 50%;
 }
 
