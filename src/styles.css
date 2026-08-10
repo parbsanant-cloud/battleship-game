@@ -679,6 +679,7 @@ input {
   position: relative;
   display: grid;
   grid-template-columns: repeat(11, var(--cell));
+  grid-template-rows: repeat(11, var(--cell));
   gap: var(--gap);
   width: max-content;
   padding: var(--board-pad);
