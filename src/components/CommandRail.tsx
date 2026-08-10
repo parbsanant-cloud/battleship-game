@@ -1,5 +1,6 @@
 import type { RefObject } from 'react'
 import type { Difficulty, Phase, Player, Stats } from '../game/types.ts'
+import { difficultyLabel } from '../presentation.ts'
 
 interface CommandRailProps {
   phase: Phase
@@ -42,9 +43,9 @@ export default function CommandRail({
   return (
     <header className="command-rail">
       <div className="command-rail__identity">
-        <span className="command-rail__eyebrow">Operation Broadside // CIC 07</span>
-        <h1 className="command-rail__title">Battleship</h1>
-        <span className="command-rail__classification">CLASSIFIED // LIVE</span>
+        <span className="command-rail__eyebrow">The long voyage</span>
+        <h1 className="command-rail__title">NOSTOS</h1>
+        <span className="command-rail__classification">Ithaca // beyond the horizon</span>
       </div>
       <div className="command-rail__strip" aria-hidden="true">
         <span />
@@ -59,8 +60,8 @@ export default function CommandRail({
           <strong>{turnLabel(phase, winner)}</strong>
         </div>
         <div className="readout">
-          <span className="readout__label">Level</span>
-          <strong>{difficulty.toUpperCase()}</strong>
+          <span className="readout__label">Difficulty</span>
+          <strong>{difficultyLabel(difficulty)}</strong>
         </div>
         <div className="readout">
           <span className="readout__label">Shots</span>
@@ -76,13 +77,15 @@ export default function CommandRail({
         </div>
       </div>
       <div
-        className={`command-rail__controls${showGameOverActions ? ' command-rail__controls--mission' : ''}`}
+        className={`command-rail__controls${
+          showGameOverActions ? ' command-rail__controls--mission' : ''
+        }`}
         aria-label="Mission and audio controls"
       >
         {showGameOverActions && (
           <>
             <button type="button" className="rail-control" onClick={onShowReport}>
-              Mission report
+              THE FINAL ACCOUNT
             </button>
             <button
               ref={playAgainRef}
@@ -90,7 +93,7 @@ export default function CommandRail({
               className="rail-control rail-control--primary"
               onClick={onPlayAgain}
             >
-              Play Again
+              SAIL AGAIN
             </button>
           </>
         )}
@@ -110,7 +113,8 @@ export default function CommandRail({
           aria-pressed={!voiceMuted}
           onClick={onToggleVoice}
         >
-          <span aria-hidden="true">{voiceMuted ? '◌' : '●'}</span> VOICE{' '}
+          <span aria-hidden="true">{voiceMuted ? '◌' : '●'}</span>
+          {' VOICE '}
           {voiceMuted ? 'OFF' : 'ON'}
         </button>
       </div>

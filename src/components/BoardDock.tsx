@@ -46,14 +46,14 @@ export default function BoardDock({
     <section className={`board-dock${scanning ? ' board-dock--scanning' : ''}`}>
       <div className="board-dock__header">
         <div>
-          <span className="tactical-label">{variant === 'player' ? 'Friendly waters' : 'Target waters'}</span>
+          <span className="tactical-label">{variant === 'player' ? 'Homeward waters' : 'Divine waters'}</span>
           <h2 className="board-dock__title">{fleetTitle}</h2>
         </div>
-        <span className="board-dock__code">{variant === 'player' ? 'BLUE-01' : 'RED-01'}</span>
+        <span className="board-dock__code">{variant === 'player' ? 'ITHACA' : 'POSEIDON'}</span>
       </div>
       {highlightShipId !== null && (
         <div className="sunk-label" aria-hidden="true">
-          {FLEET.find((ship) => ship.id === highlightShipId)?.name} Destroyed
+          {FLEET.find((ship) => ship.id === highlightShipId)?.name} Sunk
         </div>
       )}
       <Board
@@ -68,7 +68,7 @@ export default function BoardDock({
         onHoverCell={onHoverCell}
       />
       <FleetStatus
-        title={variant === 'player' ? 'Your fleet' : 'Enemy fleet'}
+        title={variant === 'player' ? 'SHIPS OF ITHACA' : "POSEIDON'S FLEET"}
         ships={fleet}
         highlightShipId={highlightShipId}
         variant={variant}

@@ -4,7 +4,7 @@ import { canPlace, placeShip, randomFleet } from './placement.ts'
 import { applyShot, isFleetDestroyed, type ShotResult } from './rules.ts'
 import type { Action, Coord, GameState, Ship, ShipId } from './types.ts'
 
-const PLACEMENT_MESSAGE = 'Place your fleet, then start the game.'
+const PLACEMENT_MESSAGE = 'Set your ships upon the wine-dark sea before dawn.'
 const MAX_LOG_ENTRIES = 8
 
 function specFor(id: ShipId): ShipSpec | undefined {
@@ -55,11 +55,11 @@ function shipName(fleet: Ship[], id: ShipId): string {
 function playerMessage(result: ShotResult, fleet: Ship[]): string {
   switch (result.kind) {
     case 'miss':
-      return 'Splash. No contact.'
+      return 'The spear vanishes beneath the black water.'
     case 'hit':
-      return 'Direct hit.'
+      return 'Wood splinters beneath your strike.'
     case 'sunk':
-      return `Enemy ${shipName(fleet, result.shipId)} neutralized.`
+      return `The ${shipName(fleet, result.shipId)} slips beneath the wine-dark sea.`
     case 'invalid':
       return ''
   }
@@ -68,22 +68,24 @@ function playerMessage(result: ShotResult, fleet: Ship[]): string {
 function aiMessage(result: ShotResult, fleet: Ship[]): string {
   switch (result.kind) {
     case 'miss':
-      return 'Enemy fire missed.'
+      return 'The sea breaks harmlessly beside you.'
     case 'hit':
-      return "Incoming fire — we've been hit."
+      return 'Poseidon answers.'
     case 'sunk':
-      return `Our ${shipName(fleet, result.shipId)} has been lost.`
+      return `The sea has claimed the ${shipName(fleet, result.shipId)}.`
     case 'invalid':
       return ''
   }
 }
 
 function playerToast(result: ShotResult, fleet: Ship[]): string | null {
-  return result.kind === 'sunk' ? `Enemy ${shipName(fleet, result.shipId)} neutralized.` : null
+  return result.kind === 'sunk'
+    ? `The ${shipName(fleet, result.shipId)} slips beneath the wine-dark sea.`
+    : null
 }
 
 function aiToast(result: ShotResult, fleet: Ship[]): string | null {
-  return result.kind === 'sunk' ? `Our ${shipName(fleet, result.shipId)} has been lost.` : null
+  return result.kind === 'sunk' ? `The sea has claimed the ${shipName(fleet, result.shipId)}.` : null
 }
 
 function animationFor(result: ShotResult): GameState['animating'] {
@@ -98,7 +100,7 @@ function firePlayerShot(state: GameState, coord: Coord): GameState {
   const won = isFleetDestroyed(fleet)
   const shotMessage = playerMessage(result, fleet)
   const toastMessage = playerToast(result, fleet)
-  const gameMessage = 'Mission accomplished. Enemy fleet neutralized.'
+  const gameMessage = 'The sea grows still. Ithaca lies beyond the horizon.'
   const next = {
     ...state,
     phase: won ? 'gameOver' : state.phase,
@@ -125,7 +127,7 @@ function fireAIShot(state: GameState, coord: Coord): GameState {
   const lost = isFleetDestroyed(fleet)
   const shotMessage = aiMessage(result, fleet)
   const toastMessage = aiToast(result, fleet)
-  const gameMessage = 'Mission failed. Our fleet has been destroyed.'
+  const gameMessage = 'The sea claims what war could not.'
   const next = {
     ...state,
     phase: lost ? 'gameOver' : state.phase,
@@ -205,7 +207,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
 
     case 'START': {
       if (state.phase !== 'placement' || state.playerFleet.length !== FLEET.length) return state
-      return { ...state, phase: 'playerTurn', selectedShipId: null, message: 'Your turn. Fire!' }
+      return { ...state, phase: 'playerTurn', selectedShipId: null, message: 'The crossing begins.' }
     }
 
     case 'PLAYER_FIRE': {

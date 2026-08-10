@@ -1,4 +1,4 @@
-import { useId, type CSSProperties } from 'react'
+import { useId, type CSSProperties, type ReactNode } from 'react'
 import type { Coord, ShipId } from '../game/types.ts'
 
 export interface SunkShipOverlay {
@@ -14,7 +14,15 @@ type ShapePrimitive =
   | { kind: 'path'; d: string; tone?: PrimitiveTone; weight?: PrimitiveWeight }
   | { kind: 'circle'; cx: number; cy: number; r: number; tone?: PrimitiveTone }
   | { kind: 'line'; x1: number; y1: number; x2: number; y2: number; weight?: PrimitiveWeight }
-  | { kind: 'rect'; x: number; y: number; width: number; height: number; rx?: number; tone?: PrimitiveTone }
+  | {
+      kind: 'rect'
+      x: number
+      y: number
+      width: number
+      height: number
+      rx?: number
+      tone?: PrimitiveTone
+    }
 
 type PrimitiveTone = 'dark' | 'scorch'
 type PrimitiveWeight = 'normal' | 'heavy'
@@ -24,60 +32,95 @@ interface ShipShape {
   structures: readonly ShapePrimitive[]
 }
 
-/** Top-down hulls and deck structures, drawn bow-right in a `length * 100` by 100 space. */
+/** Top-down wooden hulls, drawn bow-right in a `length * 100` by 100 space. */
 const SHAPES: Record<ShipId, ShipShape> = {
   carrier: {
-    hull: 'M8 50 34 16H430L492 36V64L430 84H34Z',
+    hull: 'M8 50 48 27 420 31 492 50 420 69 48 73Z',
     structures: [
-      { kind: 'rect', x: 42, y: 29, width: 260, height: 42, tone: 'dark' },
-      { kind: 'line', x1: 58, y1: 50, x2: 288, y2: 50, weight: 'heavy' },
-      { kind: 'line', x1: 58, y1: 34, x2: 288, y2: 34 },
-      { kind: 'line', x1: 58, y1: 66, x2: 288, y2: 66 },
-      { kind: 'rect', x: 326, y: 27, width: 48, height: 23, rx: 3, tone: 'dark' },
-      { kind: 'line', x1: 350, y1: 27, x2: 350, y2: 15, weight: 'heavy' },
-      { kind: 'circle', cx: 184, cy: 53, r: 8, tone: 'scorch' },
+      { kind: 'line', x1: 62, y1: 34, x2: 405, y2: 38 },
+      { kind: 'line', x1: 62, y1: 66, x2: 405, y2: 62 },
+      { kind: 'line', x1: 76, y1: 34, x2: 56, y2: 14 },
+      { kind: 'line', x1: 114, y1: 32, x2: 96, y2: 12 },
+      { kind: 'line', x1: 152, y1: 32, x2: 136, y2: 12 },
+      { kind: 'line', x1: 190, y1: 32, x2: 176, y2: 12 },
+      { kind: 'line', x1: 228, y1: 32, x2: 216, y2: 12 },
+      { kind: 'line', x1: 266, y1: 32, x2: 256, y2: 12 },
+      { kind: 'line', x1: 304, y1: 32, x2: 296, y2: 12 },
+      { kind: 'line', x1: 342, y1: 34, x2: 336, y2: 14 },
+      { kind: 'line', x1: 76, y1: 66, x2: 56, y2: 86 },
+      { kind: 'line', x1: 114, y1: 68, x2: 96, y2: 88 },
+      { kind: 'line', x1: 152, y1: 68, x2: 136, y2: 88 },
+      { kind: 'line', x1: 190, y1: 68, x2: 176, y2: 88 },
+      { kind: 'line', x1: 228, y1: 68, x2: 216, y2: 88 },
+      { kind: 'line', x1: 266, y1: 68, x2: 256, y2: 88 },
+      { kind: 'line', x1: 304, y1: 68, x2: 296, y2: 88 },
+      { kind: 'rect', x: 190, y: 37, width: 56, height: 26, rx: 4, tone: 'dark' },
+      { kind: 'line', x1: 218, y1: 37, x2: 218, y2: 10, weight: 'heavy' },
+      { kind: 'line', x1: 218, y1: 10, x2: 252, y2: 18 },
+      { kind: 'circle', cx: 377, cy: 50, r: 7, tone: 'scorch' },
     ],
   },
   battleship: {
-    hull: 'M8 50 34 18H350L390 34V66L350 82H34Z',
+    hull: 'M8 50 48 29 340 33 392 50 340 67 48 71Z',
     structures: [
-      { kind: 'circle', cx: 92, cy: 50, r: 14, tone: 'dark' },
-      { kind: 'line', x1: 92, y1: 50, x2: 70, y2: 50, weight: 'heavy' },
-      { kind: 'rect', x: 166, y: 27, width: 66, height: 46, rx: 4, tone: 'dark' },
-      { kind: 'line', x1: 199, y1: 27, x2: 199, y2: 14, weight: 'heavy' },
-      { kind: 'circle', cx: 304, cy: 50, r: 14, tone: 'dark' },
-      { kind: 'line', x1: 304, y1: 50, x2: 326, y2: 50, weight: 'heavy' },
-      { kind: 'circle', cx: 256, cy: 65, r: 7, tone: 'scorch' },
+      { kind: 'line', x1: 78, y1: 35, x2: 58, y2: 15 },
+      { kind: 'line', x1: 120, y1: 34, x2: 102, y2: 14 },
+      { kind: 'line', x1: 162, y1: 34, x2: 146, y2: 14 },
+      { kind: 'line', x1: 204, y1: 34, x2: 190, y2: 14 },
+      { kind: 'line', x1: 246, y1: 34, x2: 234, y2: 14 },
+      { kind: 'line', x1: 288, y1: 35, x2: 278, y2: 16 },
+      { kind: 'line', x1: 78, y1: 65, x2: 58, y2: 85 },
+      { kind: 'line', x1: 120, y1: 66, x2: 102, y2: 86 },
+      { kind: 'line', x1: 162, y1: 66, x2: 146, y2: 86 },
+      { kind: 'line', x1: 204, y1: 66, x2: 190, y2: 86 },
+      { kind: 'line', x1: 246, y1: 66, x2: 234, y2: 86 },
+      { kind: 'line', x1: 288, y1: 65, x2: 278, y2: 84 },
+      { kind: 'rect', x: 164, y: 38, width: 58, height: 24, rx: 4, tone: 'dark' },
+      { kind: 'line', x1: 193, y1: 38, x2: 193, y2: 13, weight: 'heavy' },
+      { kind: 'circle', cx: 326, cy: 50, r: 6, tone: 'scorch' },
     ],
   },
   cruiser: {
-    hull: 'M10 50 38 24H250L290 38V62L250 76H38Z',
+    hull: 'M10 50 46 31 254 35 290 50 254 65 46 69Z',
     structures: [
-      { kind: 'circle', cx: 94, cy: 50, r: 12, tone: 'dark' },
-      { kind: 'line', x1: 94, y1: 50, x2: 76, y2: 50, weight: 'heavy' },
-      { kind: 'rect', x: 144, y: 30, width: 46, height: 40, rx: 4, tone: 'dark' },
-      { kind: 'line', x1: 167, y1: 30, x2: 167, y2: 15, weight: 'heavy' },
-      { kind: 'line', x1: 161, y1: 15, x2: 173, y2: 15, weight: 'heavy' },
+      { kind: 'line', x1: 74, y1: 36, x2: 58, y2: 16 },
+      { kind: 'line', x1: 114, y1: 35, x2: 100, y2: 15 },
+      { kind: 'line', x1: 154, y1: 35, x2: 142, y2: 15 },
+      { kind: 'line', x1: 194, y1: 35, x2: 184, y2: 16 },
+      { kind: 'line', x1: 74, y1: 64, x2: 58, y2: 84 },
+      { kind: 'line', x1: 114, y1: 65, x2: 100, y2: 85 },
+      { kind: 'line', x1: 154, y1: 65, x2: 142, y2: 85 },
+      { kind: 'line', x1: 194, y1: 65, x2: 184, y2: 84 },
+      { kind: 'rect', x: 132, y: 39, width: 40, height: 22, rx: 4, tone: 'dark' },
+      { kind: 'line', x1: 152, y1: 39, x2: 152, y2: 14, weight: 'heavy' },
+      { kind: 'circle', cx: 238, cy: 50, r: 5, tone: 'scorch' },
     ],
   },
   submarine: {
-    hull: 'M12 50Q26 20 64 18H236Q274 20 288 50Q274 80 236 82H64Q26 80 12 50Z',
+    hull: 'M12 50 44 34 242 37 288 50 242 63 44 66Z',
     structures: [
-      { kind: 'rect', x: 136, y: 27, width: 28, height: 22, rx: 5, tone: 'dark' },
-      { kind: 'line', x1: 150, y1: 27, x2: 150, y2: 12, weight: 'heavy' },
-      { kind: 'line', x1: 150, y1: 12, x2: 162, y2: 12, weight: 'heavy' },
-      { kind: 'line', x1: 50, y1: 50, x2: 250, y2: 50 },
-      { kind: 'circle', cx: 214, cy: 65, r: 7, tone: 'scorch' },
+      { kind: 'line', x1: 76, y1: 38, x2: 62, y2: 18 },
+      { kind: 'line', x1: 116, y1: 37, x2: 104, y2: 17 },
+      { kind: 'line', x1: 156, y1: 37, x2: 146, y2: 17 },
+      { kind: 'line', x1: 196, y1: 37, x2: 188, y2: 18 },
+      { kind: 'line', x1: 76, y1: 62, x2: 62, y2: 82 },
+      { kind: 'line', x1: 116, y1: 63, x2: 104, y2: 83 },
+      { kind: 'line', x1: 156, y1: 63, x2: 146, y2: 83 },
+      { kind: 'line', x1: 196, y1: 63, x2: 188, y2: 82 },
+      { kind: 'rect', x: 130, y: 40, width: 32, height: 20, rx: 4, tone: 'dark' },
+      { kind: 'line', x1: 146, y1: 40, x2: 146, y2: 15, weight: 'heavy' },
+      { kind: 'circle', cx: 232, cy: 50, r: 5, tone: 'scorch' },
     ],
   },
   destroyer: {
-    hull: 'M8 50 42 20H158L192 40V60L158 80H42Z',
+    hull: 'M8 50 44 37 156 40 192 50 156 60 44 63Z',
     structures: [
-      { kind: 'circle', cx: 52, cy: 50, r: 9, tone: 'dark' },
-      { kind: 'line', x1: 52, y1: 50, x2: 36, y2: 50, weight: 'heavy' },
-      { kind: 'rect', x: 76, y: 30, width: 46, height: 40, rx: 3, tone: 'dark' },
-      { kind: 'line', x1: 99, y1: 30, x2: 99, y2: 17, weight: 'heavy' },
-      { kind: 'circle', cx: 145, cy: 50, r: 6, tone: 'scorch' },
+      { kind: 'line', x1: 76, y1: 40, x2: 62, y2: 20 },
+      { kind: 'line', x1: 112, y1: 40, x2: 100, y2: 20 },
+      { kind: 'line', x1: 76, y1: 60, x2: 62, y2: 80 },
+      { kind: 'line', x1: 112, y1: 60, x2: 100, y2: 80 },
+      { kind: 'rect', x: 92, y: 42, width: 24, height: 16, rx: 3, tone: 'dark' },
+      { kind: 'circle', cx: 144, cy: 50, r: 4, tone: 'scorch' },
     ],
   },
 }
@@ -91,6 +134,70 @@ function primitiveClass(tone?: PrimitiveTone, weight?: PrimitiveWeight) {
   ]
     .filter(Boolean)
     .join(' ')
+}
+
+function isOar(structure: ShapePrimitive): boolean {
+  return (
+    structure.kind === 'line' &&
+    Math.abs(structure.x2 - structure.x1) > 4 &&
+    Math.abs(structure.x2 - structure.x1) <= 24 &&
+    (structure.y1 < 30 || structure.y2 < 30 || structure.y1 > 70 || structure.y2 > 70)
+  )
+}
+
+function renderPrimitive(structure: ShapePrimitive, index: number): ReactNode {
+  const className = primitiveClass(
+    'tone' in structure ? structure.tone : undefined,
+    'weight' in structure ? structure.weight : undefined,
+  )
+
+  if (structure.kind === 'path') {
+    return (
+      <path
+        key={index}
+        className={className}
+        d={structure.d}
+        vectorEffect="non-scaling-stroke"
+      />
+    )
+  }
+  if (structure.kind === 'circle') {
+    return (
+      <circle
+        key={index}
+        className={className}
+        cx={structure.cx}
+        cy={structure.cy}
+        r={structure.r}
+        vectorEffect="non-scaling-stroke"
+      />
+    )
+  }
+  if (structure.kind === 'line') {
+    return (
+      <line
+        key={index}
+        className={className}
+        x1={structure.x1}
+        y1={structure.y1}
+        x2={structure.x2}
+        y2={structure.y2}
+        vectorEffect="non-scaling-stroke"
+      />
+    )
+  }
+  return (
+    <rect
+      key={index}
+      className={className}
+      x={structure.x}
+      y={structure.y}
+      width={structure.width}
+      height={structure.height}
+      rx={structure.rx}
+      vectorEffect="non-scaling-stroke"
+    />
+  )
 }
 
 export default function SunkShipSilhouette({ ship }: SunkShipSilhouetteProps) {
@@ -128,47 +235,9 @@ export default function SunkShipSilhouette({ ship }: SunkShipSilhouetteProps) {
           </clipPath>
         </defs>
         <path className="sunk-silhouette__hull" d={shape.hull} vectorEffect="non-scaling-stroke" />
+        <g>{shape.structures.filter(isOar).map(renderPrimitive)}</g>
         <g clipPath={`url(#${clipId})`}>
-          {shape.structures.map((structure, index) =>
-            structure.kind === 'path' ? (
-              <path
-                key={index}
-                className={primitiveClass(structure.tone, structure.weight)}
-                d={structure.d}
-                vectorEffect="non-scaling-stroke"
-              />
-            ) : structure.kind === 'circle' ? (
-              <circle
-                key={index}
-                className={primitiveClass(structure.tone)}
-                cx={structure.cx}
-                cy={structure.cy}
-                r={structure.r}
-                vectorEffect="non-scaling-stroke"
-              />
-            ) : structure.kind === 'line' ? (
-              <line
-                key={index}
-                className={primitiveClass(undefined, structure.weight)}
-                x1={structure.x1}
-                y1={structure.y1}
-                x2={structure.x2}
-                y2={structure.y2}
-                vectorEffect="non-scaling-stroke"
-              />
-            ) : (
-              <rect
-                key={index}
-                className={primitiveClass(structure.tone)}
-                x={structure.x}
-                y={structure.y}
-                width={structure.width}
-                height={structure.height}
-                rx={structure.rx}
-                vectorEffect="non-scaling-stroke"
-              />
-            ),
-          )}
+          {shape.structures.filter((structure) => !isOar(structure)).map(renderPrimitive)}
         </g>
       </svg>
     </div>

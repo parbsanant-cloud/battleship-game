@@ -21,7 +21,7 @@ export default function FleetStatus({
     <section className={`fleet-status fleet-status--${variant}`} aria-label={title}>
       <div className="fleet-status__header">
         <div>
-          <span className="fleet-status__eyebrow">Asset roster</span>
+          <span className="fleet-status__eyebrow">The fleet</span>
           <h2 className="fleet-status__title">{title}</h2>
         </div>
         <span className="fleet-status__count">{vessels} / {FLEET.length}</span>
@@ -34,14 +34,14 @@ export default function FleetStatus({
           const damaged = hits > 0
           const critical = damaged && !sunk && hits >= spec.length - 1
           const status = sunk
-            ? 'DESTROYED'
+            ? 'SUNK'
             : critical
-              ? 'CRITICAL'
+              ? 'FALTERING'
               : damaged
-                ? 'DAMAGED'
+                ? 'WOUNDED'
                 : variant === 'deployment' && ship
                   ? 'READY'
-                  : 'OPERATIONAL'
+                  : 'WHOLE'
           const name = spec.name
 
           return (

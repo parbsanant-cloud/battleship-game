@@ -16,7 +16,7 @@ import { chooseAIShot } from './game/ai.ts'
 import { canPlace, shipCells } from './game/placement.ts'
 import { createInitialState, gameReducer } from './game/reducer.ts'
 import type { BoardPreview, DisplayCellState } from './components/Board.tsx'
-import type { CellState, Coord, GameState, ShipId } from './game/types.ts'
+import type { BattleLogEntry, CellState, Coord, GameState, ShipId } from './game/types.ts'
 
 function maskBoard(cells: CellState[], revealShips: boolean): DisplayCellState[] {
   return cells.map((cell) => (cell === 'ship' ? (revealShips ? 'revealed' : 'empty') : cell))
@@ -59,6 +59,7 @@ export default function App() {
   const [soundMuted, setSoundMuted] = useState(readSoundMuted)
   const [voiceMuted, setVoiceMuted] = useState(readVoiceMuted)
   const [reportDismissed, setReportDismissed] = useState(false)
+  const [storyBeats, setStoryBeats] = useState<BattleLogEntry[]>([])
   const [sunkFeedback, setSunkFeedback] = useState<{
     shipId: ShipId
     fleet: 'player' | 'ai'
@@ -70,6 +71,7 @@ export default function App() {
   const lastVoiceAnimationRef = useRef<string | null>(null)
   const announcedWinnerRef = useRef<GameState['winner']>(null)
   const previousPhaseRef = useRef<GameState['phase']>(state.phase)
+  const storyBeatRef = useRef(new Set<string>())
   const reportPlayAgainRef = useRef<HTMLButtonElement>(null)
   const stateRef = useRef<GameState>(state)
   stateRef.current = state
@@ -83,6 +85,55 @@ export default function App() {
     }
     previousPhaseRef.current = phase
   }, [phase])
+
+  useEffect(() => {
+    if (phase === 'placement') {
+      storyBeatRef.current.clear()
+      setStoryBeats([])
+      return
+    }
+
+    const messages = state.battleLog.map((entry) => entry.message)
+    const triggers: Array<[string, string, boolean]> = [
+      [
+        'opening',
+        'Ten years at war. One sea between you and home.',
+        state.stats.playerShots + state.stats.aiShots > 0,
+      ],
+      [
+        'restless',
+        'The wind shifts. The sea grows restless.',
+        messages.some(
+          (entry) => entry.includes('Wood splinters') || entry.includes('Poseidon answers'),
+        ),
+      ],
+      [
+        'offering',
+        'Poseidon has taken his first offering.',
+        messages.some((entry) => entry.includes('sea has claimed')),
+      ],
+      [
+        'stars',
+        'Through the storm, someone swears they can see stars to the west.',
+        state.stats.playerShots + state.stats.aiShots >= 4,
+      ],
+      ['clouds', 'The clouds begin to break.', state.stats.playerHits >= 12],
+    ]
+    const pending = triggers.filter(
+      ([key, , triggered]) => triggered && !storyBeatRef.current.has(key),
+    )
+    if (pending.length === 0) return
+
+    const eventId = state.nextLogId - 1
+    setStoryBeats((current) => [
+      ...current,
+      ...pending.map(([, message], index) => ({
+        id: eventId + (index + 1) / 10,
+        message,
+      })),
+    ])
+    for (const [key] of pending) storyBeatRef.current.add(key)
+  }, [phase, state.battleLog, state.nextLogId, state.stats])
 
   useEffect(() => {
     if (phase === 'gameOver' && reportDismissed) {
@@ -335,12 +386,12 @@ export default function App() {
           <section className="deployment-screen__board">
             <div className="screen-heading">
               <span className="tactical-label">Deployment grid</span>
-              <h2>Your waters</h2>
-              <p>Assign positions for the task group.</p>
+              <h2>Ready the fleet</h2>
+              <p>The sea awaits your formation.</p>
             </div>
             <Board
               cells={playerBoard.cells}
-              label="Your waters"
+              label="Your fleet"
               interactive={placing}
               preview={preview}
               sunkShips={[]}
@@ -364,10 +415,15 @@ export default function App() {
         </main>
       ) : (
         <main className="combat-screen screen-enter">
+          <div className="screen-heading combat-screen__heading">
+            <span className="tactical-label">THE HOMEWARD SEA</span>
+            <h2>THE CROSSING</h2>
+            <p>Between the wrath of the sea and the pull of home.</p>
+          </div>
           <div className="combat-screen__boards">
             <BoardDock
-              fleetTitle="Your fleet"
-              boardLabel="Your fleet"
+              fleetTitle="YOUR FLEET"
+              boardLabel="YOUR FLEET"
               cells={playerBoard.cells}
               fleet={state.playerFleet}
               interactive={false}
@@ -381,8 +437,8 @@ export default function App() {
               scanning={scanning}
             />
             <BoardDock
-              fleetTitle="Enemy waters"
-              boardLabel="Enemy waters"
+              fleetTitle="POSEIDON'S WATERS"
+              boardLabel="POSEIDON'S WATERS"
               cells={maskBoard(state.aiBoard.cells, phase === 'gameOver' && state.winner === 'ai')}
               fleet={state.aiFleet}
               interactive={phase === 'playerTurn' && animating === null}
@@ -395,13 +451,20 @@ export default function App() {
               variant="enemy"
             />
           </div>
-          <Comms entries={state.battleLog} message={state.message} phase={phase} winner={state.winner} />
+          <Comms
+            entries={[...state.battleLog, ...storyBeats].sort((a, b) => b.id - a.id)}
+            message={state.message}
+            phase={phase}
+            winner={state.winner}
+          />
           {phase === 'gameOver' && state.winner !== null && !reportDismissed && (
             <GameOver
               winner={state.winner}
               stats={state.stats}
               difficulty={state.difficulty}
-              playerShipsRemaining={state.playerFleet.filter((ship) => ship.hits < ship.length).length}
+              playerShipsRemaining={state.playerFleet.filter(
+                (ship) => ship.hits < ship.length,
+              ).length}
               aiShipsRemaining={state.aiFleet.filter((ship) => ship.hits < ship.length).length}
               onDismiss={dismissReport}
               onPlayAgain={playAgain}

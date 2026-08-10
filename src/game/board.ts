@@ -10,11 +10,11 @@ export interface ShipSpec {
 }
 
 export const FLEET: readonly ShipSpec[] = [
-  { id: 'carrier', name: 'Carrier', length: 5 },
-  { id: 'battleship', name: 'Battleship', length: 4 },
-  { id: 'cruiser', name: 'Cruiser', length: 3 },
-  { id: 'submarine', name: 'Submarine', length: 3 },
-  { id: 'destroyer', name: 'Destroyer', length: 2 },
+  { id: 'carrier', name: 'Great War Galley', length: 5 },
+  { id: 'battleship', name: 'Heavy Trireme', length: 4 },
+  { id: 'cruiser', name: 'War Trireme', length: 3 },
+  { id: 'submarine', name: 'Scout Galley', length: 3 },
+  { id: 'destroyer', name: 'Raider', length: 2 },
 ]
 
 export const TOTAL_SHIP_CELLS = FLEET.reduce((sum, spec) => sum + spec.length, 0)
