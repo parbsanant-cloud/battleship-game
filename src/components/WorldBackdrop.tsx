@@ -1,11 +1,11 @@
 function Cyclops() {
   return (
-    <svg viewBox="0 0 260 150" preserveAspectRatio="xMidYMid meet" role="presentation">
-      <path d="M0 126 30 79 75 68 111 25 166 45 204 89 252 109 260 150H0Z" fill="#101b28" />
-      <path d="M93 82Q129 45 165 80q-35 39-72 2Z" fill="#45545b" fillOpacity="0.72" />
-      <ellipse cx="129" cy="79" rx="11" ry="16" fill="#d5bc76" fillOpacity="0.78" />
-      <circle cx="129" cy="79" r="4" fill="#09111b" />
-      <path d="M18 128Q96 112 178 129T258 126" fill="none" stroke="#9daeb0" strokeOpacity="0.45" strokeWidth="3" />
+    <svg viewBox="0 0 300 170" preserveAspectRatio="xMidYMid meet" role="presentation">
+      <path d="M0 151 18 116 43 112 57 75 84 87 106 39 132 66 155 19 183 62 214 50 238 93 271 97 300 137V170H0Z" fill="#101a25" />
+      <path d="M98 138Q115 99 146 91q28 8 43 47-39 16-91 0Z" fill="#07101a" />
+      <path d="M118 132q23-20 45-2" fill="none" stroke="#263a43" strokeOpacity="0.8" strokeWidth="4" />
+      <circle cx="141" cy="120" r="3.5" fill="#cfb975" fillOpacity="0.42" />
+      <path d="M20 153q74-18 144 0t116-3" fill="none" stroke="#6e878d" strokeOpacity="0.32" strokeWidth="3" />
     </svg>
   )
 }
@@ -13,11 +13,12 @@ function Cyclops() {
 function Sirens() {
   return (
     <svg viewBox="0 0 240 150" preserveAspectRatio="xMidYMid meet" role="presentation">
-      <path d="M0 125Q43 84 93 101t76-1q40-14 71 27v23H0Z" fill="#101722" />
-      <path d="M91 105q-1-41 16-65 18 27 14 63M139 106q1-43 19-69 15 30 8 67" fill="none" stroke="#b7aa8f" strokeOpacity="0.75" strokeWidth="4" />
-      <circle cx="107" cy="39" r="4" fill="#e4ce8a" fillOpacity="0.82" />
-      <circle cx="158" cy="36" r="4" fill="#e4ce8a" fillOpacity="0.82" />
-      <path d="M22 129q65-20 119 1t86-2" fill="none" stroke="#a4b7b5" strokeOpacity="0.48" strokeWidth="4" />
+      <path d="M0 127 20 108 42 113 66 92 91 106 115 90 143 105 168 91 192 111 218 101 240 125V150H0Z" fill="#101a25" />
+      <circle cx="104" cy="71" r="6" fill="#182733" />
+      <path d="M93 111q2-29 11-37 12 9 16 37l-7 18H99Z" fill="#182733" />
+      <circle cx="153" cy="67" r="5.5" fill="#182733" />
+      <path d="M143 111q2-31 10-39 12 10 16 39l-7 17H149Z" fill="#182733" />
+      <path d="M22 131q65-17 119 1t77-3" fill="none" stroke="#6d858c" strokeOpacity="0.3" strokeWidth="3" />
     </svg>
   )
 }

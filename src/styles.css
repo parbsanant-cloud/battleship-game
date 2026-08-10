@@ -67,7 +67,11 @@ body {
   margin: 0;
   color: var(--white);
   background:
-    linear-gradient(165deg, #173b56 0%, #0d2940 45%, #101b31 72%, #1b1223 100%);
+    radial-gradient(ellipse at 50% 0%, rgba(220, 224, 202, 0.22), transparent 22rem),
+    radial-gradient(ellipse at 10% 35%, rgba(50, 131, 145, 0.34), transparent 30rem),
+    radial-gradient(ellipse at 88% 61%, rgba(105, 47, 66, 0.38), transparent 34rem),
+    repeating-linear-gradient(172deg, transparent 0 8rem, rgba(146, 183, 184, 0.08) 8.05rem 8.12rem, transparent 8.2rem 13rem),
+    linear-gradient(180deg, #1c4661 0%, #0c2a43 42%, #112a40 70%, #172a3e 100%);
 }
 
 button,
@@ -98,12 +102,6 @@ input {
   min-height: 100%;
   z-index: -1;
   overflow: visible;
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(220, 224, 202, 0.22), transparent 22rem),
-    radial-gradient(ellipse at 10% 35%, rgba(50, 131, 145, 0.34), transparent 30rem),
-    radial-gradient(ellipse at 88% 61%, rgba(105, 47, 66, 0.38), transparent 34rem),
-    repeating-linear-gradient(172deg, transparent 0 8rem, rgba(146, 183, 184, 0.08) 8.05rem 8.12rem, transparent 8.2rem 13rem),
-    linear-gradient(180deg, #1c4661 0%, #0c2a43 42%, #101d34 70%, #211325 100%);
   pointer-events: none;
 }
 
@@ -119,19 +117,13 @@ input {
   background:
     radial-gradient(circle at 12% 9%, rgba(238, 233, 218, 0.82) 0 1px, transparent 1.8px),
     radial-gradient(circle at 76% 16%, rgba(238, 233, 218, 0.65) 0 1px, transparent 1.8px),
-    radial-gradient(circle at 58% 7%, rgba(215, 184, 115, 0.62) 0 1px, transparent 1.8px),
-    repeating-linear-gradient(174deg, transparent 0 11rem, rgba(205, 214, 196, 0.11) 11.05rem 11.12rem, transparent 11.2rem 17rem);
-  background-size: 13rem 11rem, 19rem 17rem, 23rem 19rem, 100% 100%;
+    radial-gradient(circle at 58% 7%, rgba(215, 184, 115, 0.62) 0 1px, transparent 1.8px);
+  background-size: 13rem 11rem, 19rem 17rem, 23rem 19rem;
   animation: mist-drift 22s ease-in-out infinite alternate;
 }
 
 .world-backdrop::after {
-  background:
-    radial-gradient(ellipse at 50% 2%, transparent 8%, rgba(205, 214, 196, 0.1) 25%, transparent 47%),
-    linear-gradient(175deg, transparent 15%, rgba(59, 128, 137, 0.14) 39%, transparent 58%),
-    linear-gradient(8deg, transparent 48%, rgba(102, 47, 67, 0.2) 72%, transparent 92%);
-  opacity: 0.9;
-  animation: mist-drift 31s ease-in-out infinite alternate-reverse;
+  background: none;
 }
 
 .world-backdrop__route {
@@ -1982,40 +1974,40 @@ input {
   }
 
   .world-backdrop {
-    min-height: 235rem;
+    min-height: 220rem;
     overflow: hidden;
   }
 
   .world-backdrop__cyclops {
-    top: 120rem;
+    top: 108rem;
     left: 2%;
     width: 9rem;
     height: 5.25rem;
   }
 
   .world-backdrop__sirens {
-    top: 145rem;
+    top: 130rem;
     right: 2%;
     width: 10rem;
     height: 6.25rem;
   }
 
   .world-backdrop__charybdis {
-    top: 170rem;
+    top: 154rem;
     left: 6%;
     width: 10rem;
     height: 10rem;
   }
 
   .world-backdrop__scylla {
-    top: 195rem;
+    top: 178rem;
     right: 1%;
     width: 12rem;
     height: 8rem;
   }
 
   .world-backdrop__ithaca {
-    top: 220rem;
+    top: 204rem;
     left: 12%;
     width: 14rem;
     height: 7rem;
