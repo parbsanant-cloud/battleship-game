@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import type { Difficulty, Player, Stats } from '../game/types.ts'
+import { difficultyLabel } from '../presentation.ts'
 
 interface GameOverProps {
   winner: Player
@@ -59,20 +60,22 @@ export default function GameOver({
           </button>
           <div aria-live="assertive">
             <h2 id="game-over-heading" className="panel__heading game-over__title">
-              {victory ? 'Mission accomplished' : 'Mission failed'}
+              {victory ? 'ITHACA' : 'CLAIMED BY THE SEA'}
             </h2>
             <p className="game-over__verdict">
-              {victory ? 'Enemy fleet destroyed.' : 'Enemy fleet prevailed.'}
+              {victory
+                ? 'The storm breaks. Beyond the black water, you see firelight on the shore. After war, wrath, and the endless sea — you are home.'
+                : 'The storm closes over the last mast. Ithaca remains beyond the horizon.'}
             </p>
           </div>
-          <div className="game-over__stamp">After-action report // {difficulty}</div>
+          <div className="game-over__stamp">THE FINAL ACCOUNT // {difficultyLabel(difficulty)}</div>
           <dl className="game-over__stats">
             <div>
               <dt>Your accuracy</dt>
               <dd>{playerAccuracy}%</dd>
             </div>
             <div>
-              <dt>AI accuracy</dt>
+              <dt>Poseidon's accuracy</dt>
               <dd>{aiAccuracy}%</dd>
             </div>
             <div>
@@ -80,7 +83,7 @@ export default function GameOver({
               <dd>{stats.playerShots}</dd>
             </div>
             <div>
-              <dt>AI shots</dt>
+              <dt>Poseidon's strikes</dt>
               <dd>{stats.aiShots}</dd>
             </div>
             <div>
@@ -92,17 +95,13 @@ export default function GameOver({
               <dd>{playerShipsRemaining}</dd>
             </div>
             <div>
-              <dt>Enemy ships left</dt>
+              <dt>Enemy vessels left</dt>
               <dd>{aiShipsRemaining}</dd>
-            </div>
-            <div>
-              <dt>Classification</dt>
-              <dd>Eyes only</dd>
             </div>
           </dl>
           {!victory && (
             <p className="game-over__note">
-              The remaining enemy fleet has been revealed on the board.
+              Poseidon's fleet is revealed upon the waters behind you.
             </p>
           )}
           <button
@@ -111,7 +110,7 @@ export default function GameOver({
             className="button button--primary"
             onClick={onPlayAgain}
           >
-            Play Again
+            {victory ? 'SAIL AGAIN' : 'DEFY THE GODS AGAIN'}
           </button>
         </section>
       </div>

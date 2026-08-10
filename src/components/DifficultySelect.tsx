@@ -1,8 +1,8 @@
 import type { Difficulty } from '../game/types.ts'
 
 const DIFFICULTIES: { value: Difficulty; label: string; hint: string }[] = [
-  { value: 'easy', label: 'Easy', hint: 'Fires at random' },
-  { value: 'normal', label: 'Normal', hint: 'Hunts down your ships' },
+  { value: 'easy', label: 'MORTAL SEAS', hint: 'The sea strikes at random' },
+  { value: 'normal', label: 'WRATH OF POSEIDON', hint: 'The god hunts your fleet' },
 ]
 
 interface DifficultySelectProps {

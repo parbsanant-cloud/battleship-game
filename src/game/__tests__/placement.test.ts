@@ -85,7 +85,7 @@ describe('placeShip', () => {
     expect(fleet).toHaveLength(1)
     expect(fleet[0]).toEqual({
       id: 'carrier',
-      name: 'Carrier',
+      name: 'Great War Galley',
       length: 5,
       cells,
       hits: 0,

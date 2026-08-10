@@ -25,8 +25,8 @@ export default function Landing({
   return (
     <main className={`briefing screen-enter${exiting ? ' briefing--exiting' : ''}`}>
       <div className="briefing__masthead">
-        <span className="briefing__eyebrow">Naval operations // CIC 07</span>
-        <span className="briefing__classification">Eyes only</span>
+        <span className="briefing__eyebrow">THE VOYAGE</span>
+        <span className="briefing__classification">Beyond the horizon</span>
       </div>
       <div className="landing__card">
         <svg
@@ -36,17 +36,23 @@ export default function Landing({
           aria-hidden="true"
           focusable="false"
         >
-          <circle cx="24" cy="24" r="21" />
-          <circle cx="24" cy="24" r="13" />
-          <circle cx="24" cy="24" r="2.5" className="landing__mark-hub" />
-          <path d="M24 3v42M3 24h42" />
-          <path d="M24 24 41 13" className="landing__mark-sweep" />
+          <path d="M7 31H36L43 24L36 38H15Z" />
+          <path d="M18 29V11M18 11L32 29M18 15L27 29" />
+          <path d="M10 35L4 39M17 35L11 41M25 35L20 42M33 35L29 41" />
+          <path d="M4 23C13 19 24 20 35 23" className="landing__mark-sweep" />
         </svg>
-        <span className="landing__eyebrow">Briefing room // Operation Broadside</span>
-        <h1 className="landing__title">Battleship</h1>
-        <p className="landing__subtitle">Locate and neutralize the opposing fleet before contact is lost.</p>
+        <span className="landing__eyebrow">A Homeric voyage</span>
+        <h1 className="landing__title">NOSTOS</h1>
+        <p className="landing__subtitle">A game of war, fate, and the long voyage home.</p>
+        <p className="landing__briefing">
+          Ten years after war, your fleet turns west.
+          <br />
+          Poseidon has other plans.
+          <br />
+          Cross the wine-dark sea. Break the fleet sent against you. Return home.
+        </p>
         <DifficultySelect
-          legend="Threat profile"
+          legend="The seas ahead"
           name="landing-difficulty"
           className="landing__difficulty"
           difficulty={difficulty}
@@ -58,7 +64,7 @@ export default function Landing({
           disabled={exiting}
           onClick={onStartMission}
         >
-          Start Mission
+          BEGIN THE VOYAGE
         </button>
         <div className="briefing__audio" aria-label="Audio controls">
           <button
