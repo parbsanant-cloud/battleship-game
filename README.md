@@ -17,7 +17,7 @@ last mast disappears beneath it.
 The game begins with a quiet briefing and a fleet waiting to be placed. Once
 the crossing starts, two chart-like boards frame the voyage: **YOUR FLEET**
 marks the homeward waters and **POSEIDON'S WATERS** hides the enemy fleet. The
-Chronicle and OMENS & VOICES feed turn shots into a small running story.
+OMENS & VOICES feed turns shots into a small running story.
 
 The presentation was built in iterations rather than added as a single theme
 pass. The core game came first; repeated play, rendered review, and user
@@ -44,8 +44,8 @@ are disabled so an already-used coordinate cannot be fired again.
 Hits use a filled ember/scorched-timber treatment, misses use pale foam, and
 sunk footprints become disturbed dark water beneath a top-down wooden galley
 silhouette. On defeat, the surviving enemy ships are revealed. Fleet panels
-track each vessel as `READY`, `OPERATIONAL`, `DAMAGED`, `CRITICAL`, or
-`DESTROYED`.
+track each vessel as `SUNK`, `FALTERING`, `WOUNDED`, `WHOLE`, or, during
+deployment, `READY`.
 
 ### Two seas
 
@@ -201,9 +201,9 @@ machine playback.
 ## Deployment
 
 NOSTOS is a static Vercel site using the Vite preset. `npm run build` emits
-`dist/`, Vercel reads the Node version from `engines.node`, pushes to `main`
-deploy production, and pull requests receive previews. No environment
-variables are required.
+`dist/`, and Vercel reads the Node version from `engines.node`. Pushes to
+`main` deploy to production, while pull requests receive preview
+deployments. No environment variables are required.
 
 ## Debugging & Iteration
 

@@ -293,7 +293,9 @@ appeared in the rendered browser UI or required user confirmation.
   information and broke the intended symmetry between the paired rosters.
 - **Resolution:** Restored real ship names and one shared status vocabulary:
   `OPERATIONAL`, `DAMAGED`, `CRITICAL`, and `DESTROYED`, with `READY` reserved
-  for deployment. Enemy positions remain masked.
+  for deployment. Enemy positions remain masked. The later NOSTOS reskin
+  replaced those historical naval labels with the current mythic vocabulary:
+  `WHOLE`, `WOUNDED`, `FALTERING`, `SUNK`, and deployment-only `READY`.
 - **Validation:** Browser review confirmed mirrored rosters without revealing
   enemy positions or changing the fairness boundary.
 
@@ -324,18 +326,19 @@ appeared in the rendered browser UI or required user confirmation.
 - **Validation:** Browser inspection of the rendered sunk silhouettes showed the
   full oars beyond the hull.
 
-## 25. Chronicle story beats disappeared mid-game
+## 25. Story beats disappeared from the OMENS & VOICES feed mid-game
 
 - **Classification:** Functional bug
 - **Bug:** Narrative beats derived from the battle log disappeared or changed
-  order during longer matches.
+  order in the `OMENS & VOICES` feed during longer matches.
 - **Cause:** The reducer intentionally caps the battle log at eight entries, so
   presentation beats derived from that log were evicted with older messages.
 - **Resolution:** Added persistent `storyBeats` presentation state and a
   `storyBeatRef` in `App`, while leaving the reducer and game log contract
   unchanged.
-- **Validation:** Browser playthroughs showed the Chronicle retaining its
-  triggered beats after the underlying battle log rolled forward.
+- **Validation:** Browser playthroughs showed the `OMENS & VOICES` feed
+  retaining its triggered beats after the underlying battle log rolled
+  forward.
 
 ## 26. The first Poseidon offering beat used the wrong event
 
